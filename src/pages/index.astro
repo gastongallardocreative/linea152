@@ -5,6 +5,7 @@ import Desktop from '../components/Desktop.astro';
 import Window from '../components/Window.astro';
 import Dock from '../components/Dock.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
+import TVPlayer from '../components/TVPlayer.astro';
 ---
 
 <html lang="es">
@@ -25,18 +26,16 @@ import LoadingScreen from '../components/LoadingScreen.astro';
 
   <body>
    <LoadingScreen />
-   
+
     <Menubar />
 
     <main class="desktop">
       <Desktop />
 
       <!-- Las ventanas: una por cada ícono -->
-      <Window id="tv" title="TV PLAYER — Linea152.exe" width={360} height={280} initialX={180} initialY={70}>
-        <p><strong>Canal TV — placeholder</strong></p>
-        <p>Acá va a ir el reproductor de YouTube con los 5 canales (Diego, Rock Nacional, Risa, Propagandas, Recortes).</p>
-        <p style="margin-top:8px;opacity:0.6;">[Construcción en Fase 2]</p>
-      </Window>
+      <Window id="tv" title="Linea 152 — TV" width={540} height={600} initialX={120} initialY={40}>
+  <TVPlayer />
+</Window>
 
       <Window id="radio" title="Radio Porteña" width={300} height={260} initialX={220} initialY={110}>
         <p><strong>Radio — placeholder</strong></p>

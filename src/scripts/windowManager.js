@@ -17,6 +17,12 @@ function init() {
   bindIconClicks();
   bindWindowEvents();
   bindGlobalMouseEvents();
+
+  // Abrir la TV automáticamente al cargar
+  // Pequeño delay para asegurar que el DOM esté completo
+  setTimeout(() => {
+    openWindow('tv');
+  }, 100);
 }
 
 /**
