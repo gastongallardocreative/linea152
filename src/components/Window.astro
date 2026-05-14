@@ -1,0 +1,134 @@
+---
+interface Props {
+  id: string;             // identificador único (ej: "tv", "radio")
+  title: string;          // texto de la titlebar
+  width?: number;         // ancho en px
+  height?: number;        // alto en px
+  initialX?: number;      // posición inicial X
+  initialY?: number;      // posición inicial Y
+}
+
+const {
+  id,
+  title,
+  width = 360,
+  height = 280,
+  initialX = 200,
+  initialY = 80,
+} = Astro.props;
+---
+
+<div
+  class="window"
+  data-window-id={id}
+  style={`width: ${width}px; height: ${height}px; left: ${initialX}px; top: ${initialY}px; display: none;`}
+>
+  <div class="window-titlebar" data-drag-handle>
+    <div class="window-buttons">
+      <button class="window-btn window-btn-close" data-action="close" aria-label="Cerrar">
+        <span>✕</span>
+      </button>
+      <button class="window-btn window-btn-minimize" data-action="minimize" aria-label="Minimizar">
+        <span>_</span>
+      </button>
+    </div>
+    <span class="window-title">{title}</span>
+    <span class="window-spacer"></span>
+  </div>
+
+  <div class="window-body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .window {
+    position: absolute;
+    background: #d4d0c8;
+    border: 1.5px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #808080,
+      4px 4px 0 rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .window.is-focused {
+    z-index: 500;
+  }
+
+  .window-titlebar {
+    background: #000080;
+    color: #fff;
+    padding: 3px 6px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: grab;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .window-titlebar:active {
+    cursor: grabbing;
+  }
+
+  .window:not(.is-focused) .window-titlebar {
+    background: #808080;
+  }
+
+  .window-buttons {
+    display: flex;
+    gap: 4px;
+  }
+
+  .window-btn {
+    width: 14px;
+    height: 14px;
+    background: #d4d0c8;
+    border: 1px solid #000;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #000;
+    font-family: monospace;
+    font-size: 9px;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .window-btn:active {
+    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
+  }
+
+  .window-title {
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .window-spacer {
+    width: 36px; /* mismo ancho que los buttons para centrar el título */
+    flex-shrink: 0;
+  }
+
+  .window-body {
+    flex: 1;
+    background: #d4d0c8;
+    padding: 12px;
+    overflow: auto;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+</style>

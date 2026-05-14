@@ -1,0 +1,52 @@
+---
+// El dock es donde se ven las ventanas minimizadas
+// Se renderiza siempre, pero los items se agregan/quitan dinámicamente
+---
+
+<div class="dock" id="dock"></div>
+
+<style>
+  .dock {
+    position: fixed;
+    bottom: 36px; /* arriba del ticker */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    background: rgba(212, 208, 200, 0.95);
+    border: 1.5px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #808080;
+    z-index: 800;
+    min-height: 36px;
+    min-width: 40px;
+  }
+
+  .dock:empty {
+    display: none; /* si no hay ventanas minimizadas, no se muestra */
+  }
+
+  /* Items del dock — los crea el JS */
+  :global(.dock-item) {
+    background: #d4d0c8;
+    border: 1px solid #000;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #000;
+    letter-spacing: 0.5px;
+    user-select: none;
+  }
+
+  :global(.dock-item:hover) {
+    background: #c0bcb4;
+  }
+
+  :global(.dock-item:active) {
+    box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff;
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+// Mensajes del ticker — más adelante esto viene de Sanity
+// Por ahora hardcodeados para el MVP de la fase 1
+const mensajes = [
+  '★ ULTIMO MOMENTO',
+  'BOCA JRS CAMPEON',
+  'MUERE ALFREDO YABRAN, SUICIDO?',
+  'VIDELA Y MASSERA DETENIDOS',
+  'ALMAGRO 89.3 PASA SODA',
+  'NUEVO CANAL EN LINEA 152',
+  'MARADONA HABLA DESDE LA BOMBONERA',
+  'CRONICA TRANSMITIO EN DIRECTO',
+  'SE VIENE LA NOCHE',
+  'CUMBIA EN AM 1080',
+];
+
+// Repetimos los mensajes varias veces para que el scroll sea continuo
+const tickerText = mensajes.join('  ★  ') + '  ★  ' + mensajes.join('  ★  ');
+---
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-content">{tickerText}</span>
+    <span class="ticker-content" aria-hidden="true">{tickerText}</span>
+  </div>
+</div>
+
+<style>
+  .ticker {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: #E02020;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+    overflow: hidden;
+    z-index: 999;
+  }
+
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    height: 100%;
+    align-items: center;
+    animation: scroll-left 60s linear infinite;
+  }
+
+  .ticker-content {
+    display: inline-block;
+    padding-right: 60px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Pausar el ticker cuando el usuario pasa el mouse, para poder leer */
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+</style>

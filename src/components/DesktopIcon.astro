@@ -1,0 +1,76 @@
+---
+// Las "props" son parámetros que el componente recibe cuando lo usás
+// Esto le da flexibilidad: el mismo componente sirve para TODOS los íconos
+interface Props {
+  name: string;        // Nombre que aparece debajo (ej: "TV")
+  emoji: string;       // Emoji o placeholder visual
+  bgColor?: string;    // Color de fondo del cuadrado (opcional)
+  targetId: string;    // ID de la ventana que abre (lo usamos después)
+}
+
+const { name, emoji, bgColor = '#888', targetId } = Astro.props;
+---
+
+<button class="desktop-icon" data-target={targetId}>
+  <div class="icon-box" style={`background: ${bgColor};`}>
+    <span class="icon-emoji">{emoji}</span>
+  </div>
+  <span class="icon-name">{name}</span>
+</button>
+
+<style>
+  .desktop-icon {
+    /* Reset del botón */
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+
+    /* Layout interno */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 80px;
+
+    /* Hover */
+    border-radius: 4px;
+    transition: background 0.1s;
+  }
+
+  .desktop-icon:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .desktop-icon:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .icon-box {
+    width: 56px;
+    height: 56px;
+    border: 1.5px solid #000;
+    box-shadow:
+      2px 2px 0 rgba(0, 0, 0, 0.6),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    image-rendering: pixelated;
+  }
+
+  .icon-emoji {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .icon-name {
+    color: #fff;
+    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 12px;
+    text-shadow:
+      1px 1px 0 #000,
+      0 0 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
+  }
+</style>

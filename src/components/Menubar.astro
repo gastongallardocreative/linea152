@@ -1,0 +1,137 @@
+---
+// Nada en el frontmatter por ahora — todo se calcula del lado del cliente
+// porque depende de la hora real de Buenos Aires
+---
+
+<header class="menubar">
+  <div class="menubar-left">
+    <span class="apple">🍎</span>
+    <span class="brand">LINEA 152</span>
+    <span class="menu-item">Archivo</span>
+    <span class="menu-item">Edición</span>
+    <span class="menu-item">Ver</span>
+    <span class="menu-item">Especial</span>
+    <span class="menu-item">Ayuda</span>
+  </div>
+
+  <div class="menubar-right">
+    <span id="ba-date">--- -- --- 1998</span>
+    <span class="separator">·</span>
+    <span id="ba-time">--:--:--</span>
+  </div>
+</header>
+
+<script>
+  // Días y meses en español rioplatense
+  const dias = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
+  const meses = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+  function updateBuenosAiresClock() {
+    // Hora actual del usuario (en el huso horario del visitante)
+    const now = new Date();
+
+    // Convertimos a hora de Buenos Aires usando Intl
+    // Esto funciona desde cualquier país del mundo
+    const baFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false,
+      weekday: 'short'
+    });
+
+    const parts = baFormatter.formatToParts(now);
+    const partsObj = {};
+    for (const p of parts) {
+      partsObj[p.type] = p.value;
+    }
+
+    // Extraemos los pedazos que necesitamos
+    const diaSemanaIngles = partsObj.weekday; // ej: "Wed"
+    const diaNum = partsObj.day.padStart(2, '0');
+    const mesNum = parseInt(partsObj.month, 10);
+    const hh = partsObj.hour === '24' ? '00' : partsObj.hour.padStart(2, '0');
+    const mm = partsObj.minute.padStart(2, '0');
+    const ss = partsObj.second.padStart(2, '0');
+
+    // Mapeo de día de semana en inglés a español
+    const mapDias = { 'Sun': 'DOM', 'Mon': 'LUN', 'Tue': 'MAR', 'Wed': 'MIE', 'Thu': 'JUE', 'Fri': 'VIE', 'Sat': 'SAB' };
+    const diaEsp = mapDias[diaSemanaIngles] || '---';
+    const mesEsp = meses[mesNum - 1];
+
+    // Año congelado en 1998 (regla del proyecto)
+    const fakeAnio = '1998';
+
+    // Pintamos en el DOM
+    const dateEl = document.getElementById('ba-date');
+    const timeEl = document.getElementById('ba-time');
+    if (dateEl) dateEl.textContent = `${diaEsp} ${diaNum} ${mesEsp} ${fakeAnio}`;
+    if (timeEl) timeEl.textContent = `${hh}:${mm}:${ss}`;
+  }
+
+  updateBuenosAiresClock();
+  setInterval(updateBuenosAiresClock, 1000);
+</script>
+
+<style>
+  .menubar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: #ffffff;
+    border-bottom: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 13px;
+    color: #000;
+    z-index: 1000;
+    user-select: none;
+  }
+
+  .menubar-left,
+  .menubar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .apple {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .brand {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  .menu-item {
+    cursor: default;
+  }
+
+  .menu-item:hover {
+    background: #000;
+    color: #fff;
+    padding: 0 4px;
+    margin: 0 -4px;
+  }
+
+  #ba-date,
+  #ba-time {
+    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 13px;
+  }
+
+  .separator {
+    opacity: 0.5;
+  }
+</style>

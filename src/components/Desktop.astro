@@ -1,0 +1,40 @@
+---
+import DesktopIcon from './DesktopIcon.astro';
+
+// Configuración de los íconos del escritorio
+// Más adelante esto viene de Sanity, por ahora hardcodeado
+const icons = [
+  { name: 'TV',       emoji: '📺', bgColor: '#1a1d14', targetId: 'tv' },
+  { name: 'RADIO',    emoji: '📻', bgColor: '#444',    targetId: 'radio' },
+  { name: 'MAPA',     emoji: '🚕', bgColor: '#F5B800', targetId: 'mapa' },
+  { name: 'CLIMA',    emoji: '☁️', bgColor: '#E8E4DD', targetId: 'clima' },
+  { name: 'EVENTOS',  emoji: '🎫', bgColor: '#fff',    targetId: 'eventos' },
+  { name: 'NEWS',     emoji: '📰', bgColor: '#fff',    targetId: 'newsletter' },
+  { name: 'CLUB',     emoji: '★',  bgColor: '#000080', targetId: 'club' },
+  { name: 'MERCH',    emoji: '👕', bgColor: '#fff',    targetId: 'merch' },
+  { name: 'ACERCA',   emoji: '🍎', bgColor: '#fff',    targetId: 'about' },
+];
+---
+
+<div class="desktop-icons">
+  {icons.map(icon => (
+    <DesktopIcon
+      name={icon.name}
+      emoji={icon.emoji}
+      bgColor={icon.bgColor}
+      targetId={icon.targetId}
+    />
+  ))}
+</div>
+
+<style>
+  .desktop-icons {
+    position: absolute;
+    top: 40px;       /* debajo del menubar */
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;     /* arriba de la viñeta y scanlines */
+  }
+</style>
