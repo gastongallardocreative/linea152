@@ -1,14 +1,34 @@
 ---
 // Loading screen estilo Poolsuite con identidad Línea 152
+
+// Imágenes disponibles para el loading
+// Cada visita elige una al azar para reforzar "archivo encontrado"
+const loadingImages = [
+  '/images/loading/diego-radio.jpg',
+  // Agregar más fotos acá cuando las tengas:
+  // '/images/loading/almagro-balcon.jpg',
+  // '/images/loading/taxi-noche.jpg',
+];
+
+// Jingles disponibles para el loading
+// Más adelante agregamos más (Transmundo, VCD, etc.)
+const loadingJingles = [
+  '/audio/loading/gativideo-chime.mp3',
+];
 ---
 
 <div class="loading-screen" id="loading-screen">
   <div class="loading-card">
-    <!-- Imagen evocativa (placeholder CSS por ahora) -->
+    <!-- Imagen evocativa -->
     <div class="loading-image">
-      <div class="vhs-still">
-        <div class="vhs-tracking"></div>
-        <span class="vhs-text">REC</span>
+      <img
+        src={loadingImages[0]}
+        alt="Línea 152"
+        id="loading-image"
+        class="loading-photo"
+      />
+      <div class="vhs-overlay">
+        <span class="vhs-rec">● REC</span>
         <span class="vhs-date">18·OCT·1998</span>
       </div>
     </div>
@@ -41,7 +61,7 @@
   </div>
 </div>
 
-<script>
+<script define:vars={{ loadingImages, loadingJingles }}>
   const filenames = [
     'archivo_porteño.avi',
     'diego_mendoza_1982.avi',
@@ -52,6 +72,14 @@
     'cronica_emergencia.avi',
   ];
 
+  // Elegir imagen random al cargar
+  function pickRandomImage() {
+    const imgEl = document.getElementById('loading-image');
+    if (!imgEl || loadingImages.length === 0) return;
+    const randomImg = loadingImages[Math.floor(Math.random() * loadingImages.length)];
+    imgEl.src = randomImg;
+  }
+
   function startBoot() {
     const button = document.getElementById('boot-button');
     const fill = document.getElementById('progress-fill');
@@ -59,21 +87,29 @@
     const filenameEl = document.getElementById('loading-filename');
     const screen = document.getElementById('loading-screen');
 
-    // Ocultar el botón y arrancar
     if (button) button.style.display = 'none';
 
-    // Elegir filename random
+    // Filename random
     const randomFile = filenames[Math.floor(Math.random() * filenames.length)];
     if (filenameEl) filenameEl.textContent = randomFile;
 
-    // TODO: acá vamos a reproducir el jingle Gativideo cuando lo tengamos
-    // const jingle = new Audio('/audio/gativideo.mp3');
-    // jingle.play();
+    // === REPRODUCIR JINGLE RANDOM ===
+    try {
+      if (loadingJingles.length > 0) {
+        const randomJingle = loadingJingles[Math.floor(Math.random() * loadingJingles.length)];
+        const jingle = new Audio(randomJingle);
+        jingle.volume = 0.7;
+        jingle.play().catch(err => {
+          console.log('Jingle no disponible:', err.message);
+        });
+      }
+    } catch (err) {
+      console.log('Audio no soportado');
+    }
 
-    // Animar la barra de progreso
+    // Animar barra de progreso
     let progress = 0;
     const interval = setInterval(() => {
-      // Incremento irregular para que parezca "real"
       progress += Math.random() * 8 + 2;
       if (progress > 100) progress = 100;
 
@@ -82,7 +118,6 @@
 
       if (progress >= 100) {
         clearInterval(interval);
-        // Pequeña pausa final antes de desaparecer
         setTimeout(() => {
           if (screen) {
             screen.style.opacity = '0';
@@ -95,8 +130,8 @@
     }, 180);
   }
 
-  // Listener del botón
   document.addEventListener('DOMContentLoaded', () => {
+    pickRandomImage();
     const button = document.getElementById('boot-button');
     if (button) {
       button.addEventListener('click', startBoot);
@@ -119,7 +154,6 @@
     transition: opacity 0.6s ease-out;
   }
 
-  /* Scanlines sobre el loading */
   .loading-screen::after {
     content: '';
     position: absolute;
@@ -135,7 +169,6 @@
     z-index: 2;
   }
 
-  /* Viñeta */
   .loading-screen::before {
     content: '';
     position: absolute;
@@ -153,15 +186,15 @@
       inset -1px -1px 0 #808080,
       6px 6px 0 rgba(0, 0, 0, 0.5);
     display: flex;
-    width: 600px;
+    width: 620px;
     max-width: 90vw;
     z-index: 10;
     position: relative;
   }
 
-  /* === Imagen VHS (placeholder por ahora) === */
+  /* === Imagen real === */
   .loading-image {
-    width: 180px;
+    width: 200px;
     flex-shrink: 0;
     background: #1a1d14;
     border-right: 1.5px solid #000;
@@ -169,48 +202,39 @@
     overflow: hidden;
   }
 
-  .vhs-still {
+  .loading-photo {
     width: 100%;
     height: 100%;
-    background:
-      radial-gradient(ellipse at 50% 40%, rgba(245, 184, 0, 0.2) 0%, transparent 60%),
-      linear-gradient(180deg, #1a1d14 0%, #2a2d24 100%);
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    padding: 12px;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.85) contrast(1.05);
   }
 
-  .vhs-still::before {
+  /* Tinte VHS sobre la foto */
+  .loading-image::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(80, 250, 123, 0.06) 0,
-      rgba(80, 250, 123, 0.06) 1px,
-      transparent 1px,
-      transparent 2px
-    );
+    background:
+      radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.4) 100%),
+      repeating-linear-gradient(
+        0deg,
+        rgba(80, 250, 123, 0.04) 0,
+        rgba(80, 250, 123, 0.04) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+    pointer-events: none;
   }
 
-  .vhs-tracking {
+  .vhs-overlay {
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 30%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.15);
-    filter: blur(2px);
-    animation: tracking 4s linear infinite;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
   }
 
-  @keyframes tracking {
-    0% { top: -10%; }
-    100% { top: 110%; }
-  }
-
-  .vhs-text {
+  .vhs-rec {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -218,6 +242,7 @@
     font-family: 'Press Start 2P', monospace;
     font-size: 9px;
     animation: blink 1.2s infinite;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
   }
 
   @keyframes blink {
@@ -226,12 +251,14 @@
   }
 
   .vhs-date {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
     color: #fff;
     font-family: 'VT323', monospace;
     font-size: 14px;
-    opacity: 0.8;
-    position: relative;
-    z-index: 2;
+    opacity: 0.85;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
   }
 
   /* === Contenido textual === */
@@ -298,7 +325,6 @@
     transition: width 0.2s ease-out;
   }
 
-  /* === Botón ENCENDER === */
   .boot-button {
     background: #F5B800;
     border: 1.5px solid #000;
