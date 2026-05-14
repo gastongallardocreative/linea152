@@ -1,0 +1,334 @@
+---
+// Loading screen estilo Poolsuite con identidad Línea 152
+---
+
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-card">
+    <!-- Imagen evocativa (placeholder CSS por ahora) -->
+    <div class="loading-image">
+      <div class="vhs-still">
+        <div class="vhs-tracking"></div>
+        <span class="vhs-text">REC</span>
+        <span class="vhs-date">18·OCT·1998</span>
+      </div>
+    </div>
+
+    <!-- Contenido textual -->
+    <div class="loading-content">
+      <h1 class="loading-title">LINEA 152</h1>
+      <p class="loading-subtitle">Cultural OS · Versión 1.5.2</p>
+      <p class="loading-credits">
+        Compilado en Buenos Aires, 2026<br />
+        Gallardo G., Sosa M., archivos<br />
+        de la ciudad, vecinos anónimos<br />
+        Copyright 1986—2026 Línea 152 SRL
+      </p>
+
+      <div class="loading-status">
+        <p class="status-line">
+          Solicitando <span id="loading-filename">archivo_porteño.avi</span>...
+          <span id="loading-percent">0</span>%
+        </p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <button class="boot-button" id="boot-button">
+        <span class="boot-arrow">▶</span> ENCENDER
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const filenames = [
+    'archivo_porteño.avi',
+    'diego_mendoza_1982.avi',
+    'tarde_de_almagro.avi',
+    'taxi_152_constitucion.avi',
+    'telefe_summer_98.avi',
+    'cumbia_conurbano.avi',
+    'cronica_emergencia.avi',
+  ];
+
+  function startBoot() {
+    const button = document.getElementById('boot-button');
+    const fill = document.getElementById('progress-fill');
+    const percentEl = document.getElementById('loading-percent');
+    const filenameEl = document.getElementById('loading-filename');
+    const screen = document.getElementById('loading-screen');
+
+    // Ocultar el botón y arrancar
+    if (button) button.style.display = 'none';
+
+    // Elegir filename random
+    const randomFile = filenames[Math.floor(Math.random() * filenames.length)];
+    if (filenameEl) filenameEl.textContent = randomFile;
+
+    // TODO: acá vamos a reproducir el jingle Gativideo cuando lo tengamos
+    // const jingle = new Audio('/audio/gativideo.mp3');
+    // jingle.play();
+
+    // Animar la barra de progreso
+    let progress = 0;
+    const interval = setInterval(() => {
+      // Incremento irregular para que parezca "real"
+      progress += Math.random() * 8 + 2;
+      if (progress > 100) progress = 100;
+
+      if (fill) fill.style.width = `${progress}%`;
+      if (percentEl) percentEl.textContent = Math.floor(progress).toString();
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        // Pequeña pausa final antes de desaparecer
+        setTimeout(() => {
+          if (screen) {
+            screen.style.opacity = '0';
+            setTimeout(() => {
+              if (screen) screen.style.display = 'none';
+            }, 600);
+          }
+        }, 400);
+      }
+    }, 180);
+  }
+
+  // Listener del botón
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('boot-button');
+    if (button) {
+      button.addEventListener('click', startBoot);
+    }
+  });
+</script>
+
+<style>
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #0F2535;
+    background-image:
+      radial-gradient(ellipse at 30% 20%, rgba(245, 184, 0, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(255, 107, 0, 0.07) 0%, transparent 50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease-out;
+  }
+
+  /* Scanlines sobre el loading */
+  .loading-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.2) 0,
+      rgba(0, 0, 0, 0.2) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Viñeta */
+  .loading-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .loading-card {
+    background: #d4d0c8;
+    border: 1.5px solid #000;
+    box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #808080,
+      6px 6px 0 rgba(0, 0, 0, 0.5);
+    display: flex;
+    width: 600px;
+    max-width: 90vw;
+    z-index: 10;
+    position: relative;
+  }
+
+  /* === Imagen VHS (placeholder por ahora) === */
+  .loading-image {
+    width: 180px;
+    flex-shrink: 0;
+    background: #1a1d14;
+    border-right: 1.5px solid #000;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vhs-still {
+    width: 100%;
+    height: 100%;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(245, 184, 0, 0.2) 0%, transparent 60%),
+      linear-gradient(180deg, #1a1d14 0%, #2a2d24 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+  }
+
+  .vhs-still::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(80, 250, 123, 0.06) 0,
+      rgba(80, 250, 123, 0.06) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  }
+
+  .vhs-tracking {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 30%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2px);
+    animation: tracking 4s linear infinite;
+  }
+
+  @keyframes tracking {
+    0% { top: -10%; }
+    100% { top: 110%; }
+  }
+
+  .vhs-text {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #E02020;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    animation: blink 1.2s infinite;
+  }
+
+  @keyframes blink {
+    0%, 60% { opacity: 1; }
+    61%, 100% { opacity: 0; }
+  }
+
+  .vhs-date {
+    color: #fff;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    opacity: 0.8;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* === Contenido textual === */
+  .loading-content {
+    flex: 1;
+    padding: 16px 20px;
+    color: #000;
+  }
+
+  .loading-title {
+    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    color: #000;
+  }
+
+  .loading-subtitle {
+    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
+    font-size: 11px;
+    margin-bottom: 12px;
+    color: #000;
+  }
+
+  .loading-credits {
+    font-family: 'VT323', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #444;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .loading-status {
+    margin-bottom: 16px;
+  }
+
+  .status-line {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #000;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #fff;
+    border: 1px solid #000;
+    box-shadow: inset 1px 1px 0 #808080;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    width: 0%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      #000080 0,
+      #000080 6px,
+      #0000a0 6px,
+      #0000a0 8px
+    );
+    transition: width 0.2s ease-out;
+  }
+
+  /* === Botón ENCENDER === */
+  .boot-button {
+    background: #F5B800;
+    border: 1.5px solid #000;
+    box-shadow:
+      inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+      3px 3px 0 rgba(0, 0, 0, 0.6);
+    padding: 10px 18px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    color: #000;
+    letter-spacing: 1px;
+    width: 100%;
+    transition: transform 0.05s;
+  }
+
+  .boot-button:hover {
+    background: #ffcc00;
+  }
+
+  .boot-button:active {
+    transform: translate(2px, 2px);
+    box-shadow:
+      inset 1px 1px 0 rgba(0, 0, 0, 0.3),
+      inset -1px -1px 0 rgba(255, 255, 255, 0.4),
+      1px 1px 0 rgba(0, 0, 0, 0.6);
+  }
+
+  .boot-arrow {
+    margin-right: 6px;
+  }
+</style>

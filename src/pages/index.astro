@@ -4,6 +4,7 @@ import Ticker from '../components/Ticker.astro';
 import Desktop from '../components/Desktop.astro';
 import Window from '../components/Window.astro';
 import Dock from '../components/Dock.astro';
+import LoadingScreen from '../components/LoadingScreen.astro';
 ---
 
 <html lang="es">
@@ -23,6 +24,8 @@ import Dock from '../components/Dock.astro';
   </head>
 
   <body>
+   <LoadingScreen />
+   
     <Menubar />
 
     <main class="desktop">
