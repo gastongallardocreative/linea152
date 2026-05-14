@@ -18,11 +18,31 @@ function init() {
   bindWindowEvents();
   bindGlobalMouseEvents();
 
-  // Abrir la TV automáticamente al cargar
-  // Pequeño delay para asegurar que el DOM esté completo
+  // Abrir la TV automáticamente al cargar, centrada en pantalla
   setTimeout(() => {
     openWindow('tv');
+    centerWindow('tv');
   }, 100);
+}
+
+/**
+ * Centra una ventana en la pantalla
+ */
+function centerWindow(windowId) {
+  const win = document.querySelector(`[data-window-id="${windowId}"]`);
+  if (!win) return;
+
+  const winWidth = win.offsetWidth;
+  const winHeight = win.offsetHeight;
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  // Calcular posición central
+  const centerX = (screenWidth - winWidth) / 2;
+  const centerY = (screenHeight - winHeight) / 2 - 30; // -30 para compensar menubar/ticker
+
+  win.style.left = `${centerX}px`;
+  win.style.top = `${Math.max(40, centerY)}px`; // mínimo 40px para no taparse con menubar
 }
 
 /**

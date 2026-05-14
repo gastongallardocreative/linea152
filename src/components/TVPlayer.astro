@@ -1,69 +1,107 @@
 ---
 // TVPlayer.astro
 // Componente del reproductor de TV — Línea 152
-// Por ahora canales hardcodeados, después conectamos Sanity
 
-// Configuración de canales y clips
-// Más adelante esto va a venir de Sanity
 const channels = [
   {
     id: 'diego',
     number: '01',
     name: 'El Pibe de oro',
+    color: '#FFD700',
+    colorSecondary: '#1B3978',
     clips: [
-      {
-        youtubeId: 'HxjuMPMC4gM',
-        startSeconds: 10,
-        endSeconds: 30,
-        filename: 'maradona_jubilados.avi',
-        date: '1992',
-        title: 'Hay que ser muy cagón para no defender a los jubilados',
-        artist: 'Diego',
-      },
+      { youtubeId: 'HxjuMPMC4gM', startSeconds: 10, endSeconds: 30, filename: 'maradona_jubilados.avi', date: '1992', title: 'Hay que ser muy cagon para no defender a los jubilados', artist: 'Diego' },
+      { youtubeId: 'f_kKF_5SSNQ', startSeconds: 203, endSeconds: 249, filename: 'diego_reality.mpeg', date: '2000', title: 'Prove di ballo Dieguito', artist: 'Diego Maradona' },
+      { youtubeId: '295WTYzgpAw', startSeconds: 0, endSeconds: 40, filename: 'el_10_prolijo.mpeg', date: '1994', title: 'El 10 te afeita', artist: 'Diego Maradona' },
+      { youtubeId: 'Yy4GE_a_P_c', startSeconds: 5, endSeconds: 50, filename: 'buen_dia.mp4', date: '1989', title: 'Diego se levanta', artist: 'Diego Maradona' },
+      { youtubeId: 'kKERx6iP9eE', startSeconds: 1, endSeconds: 36, filename: 'petiso.avi', date: '1991', title: 'Baila Baila', artist: 'Diego Maravilla' },
+    ],
+  },
+  {
+    id: 'rompan',
+    number: '02',
+    name: 'Rompan todo',
+    color: '#B026FF',
+    colorSecondary: '#000',
+    clips: [
+      { youtubeId: 'EVCDKYavOig', startSeconds: 28, endSeconds: 165, filename: 'mi_enfermedad.avi', date: '1992', title: 'Fabi en Hacelo x mi', artist: 'Fabiana Cantilo' },
+      { youtubeId: 'WWEXQRCddUs', startSeconds: 9, endSeconds: 200, filename: 'giros_martes13.avi', date: '1984', title: 'Fito Gira', artist: 'Paez' },
+      { youtubeId: 'Iv91jaFlV5s', startSeconds: 9, endSeconds: 99, filename: 'rompan_todo.mpeg', date: "'07", title: 'Vos viste Kill Bill', artist: 'Garcia' },
+      { youtubeId: 'OpV_tj095wo', startSeconds: 695, endSeconds: 896, filename: 'de_mi.mpeg', date: '1990', title: 'Hola_su', artist: 'Garcia' },
+      { youtubeId: 'gC2dUxSmENA', startSeconds: 30, endSeconds: 220, filename: 'ritmo_flaco.avi', date: '1991', title: 'Ritmo de la noche', artist: 'Flaco' },
+    ],
+  },
+  {
+    id: 'ravioles',
+    number: '03',
+    name: 'Yo hago ravioles, ella hace ravioles',
+    color: '#FFC830',
+    colorSecondary: '#E25822',
+    clips: [
+      { youtubeId: 'J0U3FLQLxP4', startSeconds: 16, endSeconds: 149, filename: 'Oso_enojado.avi', date: '1999', title: 'Los muchachos se entretienen', artist: 'Oso Arturo' },
+      { youtubeId: 'vuGfWAlYFgs', startSeconds: 10, endSeconds: 340, filename: 'la_culpa_es_de_nicole.mpeg', date: '2007', title: 'Estan enganando a la gente', artist: 'Nicki' },
+      { youtubeId: 'FsCQpfZRTRs', startSeconds: 10, endSeconds: 340, filename: 'grupo_red.avi', date: '1999', title: 'Videomatch cumbia', artist: 'Red y Nicolas' },
+      { youtubeId: 'bNXpzLzjWtk', startSeconds: 10, endSeconds: 290, filename: 'cha_cha_cha.mpeg', date: '1993', title: 'Viva Peroon', artist: 'Casero' },
+      { youtubeId: 'Ddvuw-ebNb4', startSeconds: 20, endSeconds: 60, filename: 'muy_cagon.mpeg', date: '1989', title: 'Exterminators', artist: 'Disi y Francella' },
+    ],
+  },
+  {
+    id: 'tanda',
+    number: '04',
+    name: 'Vamos a la tanda',
+    color: '#FF6B00',
+    colorSecondary: '#8B4513',
+    clips: [
+      { youtubeId: 'NT3l0d4IB80', startSeconds: 1, endSeconds: 28, filename: 'koh_i_nor.avi', date: '1990', title: 'Poderoso el chiquitin', artist: 'Secarropas' },
+      { youtubeId: 'E0Bbo7jbL48', startSeconds: 1, endSeconds: 25, filename: 'tang.avi', date: '1993', title: 'Quiero mas', artist: 'Jaime' },
+      { youtubeId: '0nMQVM23NmI', startSeconds: 1, endSeconds: 60, filename: 'verdad_lactea.avi', date: '1981', title: 'Leche fortificada', artist: 'Serenisima' },
+      { youtubeId: 'JrDUwgMQCDY', startSeconds: 1, endSeconds: 45, filename: 'chester.mpeg', date: '1989', title: 'Cigarrillo Chesterfield', artist: 'Publiarg' },
+      { youtubeId: 'yPJLL2FA8qg', startSeconds: 5, endSeconds: 148, filename: 'turco_lo_hizo.avi', date: '1999', title: 'Menem lo hizo', artist: 'El turco' },
+    ],
+  },
+  {
+    id: 'archivo',
+    number: '05',
+    name: 'El archivo argentino',
+    color: '#50FA7B',
+    colorSecondary: '#0A4D2E',
+    clips: [
+      { youtubeId: '1tdOI0X0phE', startSeconds: 3, endSeconds: 76, filename: 'acento.mpeg', date: '1990', title: 'Acento porteno', artist: 'Los 90' },
+      { youtubeId: 'oHrHIWk-Z3A', startSeconds: 11, endSeconds: 120, filename: 'cebollitas.avi', date: '1997', title: 'El Vestuario', artist: 'Telefe' },
+      { youtubeId: 'Nq6D8Fd9rRw', startSeconds: 1, endSeconds: 22, filename: 'doble_turco_AV2688.avi', date: '1989', title: 'Luna Park del turco', artist: 'Liga de Basquet' },
+      { youtubeId: 'ugJ2VaZnZZk', startSeconds: 1, endSeconds: 85, filename: 'billete_2.avi', date: '1998', title: 'El nuevo billete', artist: 'Banco Central' },
+      { youtubeId: 'UK5ba8rJQRU', startSeconds: 4, endSeconds: 95, filename: 'la_chiqui_pistera_1987.avi', date: '1987', title: 'Ford Sierra', artist: 'Mirtha' },
     ],
   },
 ];
 
-// Datos del primer canal/clip para renderizar inicial
 const initialChannel = channels[0];
 const initialClip = initialChannel.clips[0];
 ---
 
-<div class="tv-player" id="tv-player">
-  <!-- Área del video (negro CRT por default) -->
+<div class="tv-player" id="tv-player" style={`--ch-color: ${initialChannel.color};`}>
   <div class="tv-screen" id="tv-screen">
-    <!-- Logo Telefe arriba a la izquierda -->
-    <img
-      src="/images/tvplayer/logo-tv.png"
-      alt="TV"
-      class="tv-logo"
-    />
+    <img src="/images/tvplayer/logo-tv.png" alt="TV" class="tv-logo" />
 
-    <!-- Pantalla apagada con botón ENCENDER -->
     <div class="tv-off-screen" id="tv-off-screen">
       <button class="tv-power-button" id="tv-power-button">
         <span class="power-arrow">▶</span> ENCENDER TV
       </button>
     </div>
 
-    <!-- Iframe de YouTube (oculto hasta que se prende) -->
     <div class="tv-video-container" id="tv-video-container">
       <div id="youtube-player"></div>
     </div>
 
-    <!-- Overlay CRT (scanlines, viñeta) sobre el video -->
     <div class="tv-crt-overlay"></div>
-
-    <!-- Overlay de transición (ruido/static entre videos) -->
+    <div class="tv-channel-tint" id="tv-channel-tint"></div>
     <div class="tv-static-overlay" id="tv-static-overlay"></div>
 
-    <!-- Metadata sobre el video (CH 01, fecha) -->
     <div class="tv-video-meta">
       <div class="tv-channel-label" id="tv-channel-label">CH {initialChannel.number}</div>
       <div class="tv-date-label" id="tv-date-label">{initialClip.date}</div>
     </div>
 
-    <!-- Filename + dimensiones video (abajo) -->
     <div class="tv-video-footer">
       <span class="tv-controls-mini">
         <img src="/images/tvplayer/btn-skip-back.png" alt="skip-back" class="mini-icon" />
@@ -76,9 +114,7 @@ const initialClip = initialChannel.clips[0];
     </div>
   </div>
 
-  <!-- Panel blanco de controles -->
   <div class="tv-controls-panel">
-    <!-- Sección título + info -->
     <div class="tv-info-row">
       <div class="tv-info-text">
         <div class="tv-title" id="tv-title">{initialClip.title}</div>
@@ -94,33 +130,21 @@ const initialClip = initialChannel.clips[0];
       </div>
     </div>
 
-    <!-- Sección tiempo + controles -->
     <div class="tv-controls-row">
       <div class="tv-time-display">
         <span class="tv-time-arrow">▶</span>
         <span id="tv-current-time">00:00</span>
       </div>
-
       <div class="tv-playback-controls">
-        <button class="tv-control-btn" id="tv-play-btn" title="Play">
-          <img src="/images/tvplayer/btn-play.png" alt="play" />
-        </button>
-        <button class="tv-control-btn" id="tv-pause-btn" title="Pause">
-          <img src="/images/tvplayer/btn-pause.png" alt="pause" />
-        </button>
-        <button class="tv-control-btn" id="tv-prev-btn" title="Anterior">
-          <img src="/images/tvplayer/btn-skip-back.png" alt="prev" />
-        </button>
-        <button class="tv-control-btn" id="tv-next-btn" title="Siguiente">
-          <img src="/images/tvplayer/btn-skip-forward.png" alt="next" />
-        </button>
+        <button class="tv-control-btn" id="tv-play-btn" title="Play"><img src="/images/tvplayer/btn-play.png" alt="play" /></button>
+        <button class="tv-control-btn" id="tv-pause-btn" title="Pause"><img src="/images/tvplayer/btn-pause.png" alt="pause" /></button>
+        <button class="tv-control-btn" id="tv-prev-btn" title="Anterior"><img src="/images/tvplayer/btn-skip-back.png" alt="prev" /></button>
+        <button class="tv-control-btn" id="tv-next-btn" title="Siguiente"><img src="/images/tvplayer/btn-skip-forward.png" alt="next" /></button>
       </div>
     </div>
   </div>
 
-  <!-- Statusbar inferior gris -->
   <div class="tv-statusbar">
-    <!-- Dropdown selector de canal -->
     <div class="tv-channel-selector">
       <span class="channel-label">Canal:</span>
       <select id="tv-channel-select" class="tv-channel-dropdown">
@@ -128,720 +152,168 @@ const initialClip = initialChannel.clips[0];
           <option value={channel.id}>{channel.name}</option>
         ))}
       </select>
-      <img
-        src="/images/tvplayer/icon-dropdown-arrow.png"
-        alt="▾"
-        class="dropdown-arrow"
-      />
+      <img src="/images/tvplayer/icon-dropdown-arrow.png" alt="▾" class="dropdown-arrow" />
     </div>
 
-    <!-- Control de volumen -->
     <div class="tv-volume-control">
       <button class="tv-volume-toggle" id="tv-volume-toggle">
-        <img
-          src="/images/tvplayer/icon-volume.png"
-          alt="volume"
-          id="tv-volume-icon"
-        />
+        <img src="/images/tvplayer/icon-volume.png" alt="volume" id="tv-volume-icon" />
       </button>
       <div class="tv-volume-slider-wrapper">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value="70"
-          class="tv-volume-slider"
-          id="tv-volume-slider"
-        />
+        <input type="range" min="0" max="100" value="70" class="tv-volume-slider" id="tv-volume-slider" />
       </div>
     </div>
 
-    <!-- Botón fullscreen -->
     <button class="tv-fullscreen-btn" id="tv-fullscreen-btn" title="Pantalla completa">
       <img src="/images/tvplayer/icon-fullscreen.png" alt="fullscreen" />
     </button>
   </div>
 </div>
 
-<!-- Datos de canales para usar desde JS -->
 <script type="application/json" id="tv-channels-data" set:html={JSON.stringify(channels)}></script>
+
 <style>
-  /* ========================================
-     TV PLAYER — LÍNEA 152
-     Estructura general
-     ======================================== */
-  .tv-player {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background: #d4d0c8;
-    overflow: hidden;
-    user-select: none;
-    font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif;
-  }
+  .tv-player { width: 100%; height: 100%; display: flex; flex-direction: column; background: #d4d0c8; overflow: hidden; user-select: none; font-family: 'Chicago FLF', 'Geneva', 'Tahoma', sans-serif; }
 
-  /* ========================================
-     PANTALLA (área del video)
-     ======================================== */
-  .tv-screen {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    background: #000;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
+  .tv-screen { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000; overflow: hidden; flex-shrink: 0; }
 
-  /* Logo Telefe arriba a la izquierda */
-  .tv-logo {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    width: 48px;
-    height: auto;
-    z-index: 5;
-    image-rendering: pixelated;
-    filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.8));
-  }
+  .tv-logo { position: absolute; top: 12px; left: 12px; width: 48px; height: auto; z-index: 5; image-rendering: pixelated; filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.8)); }
 
-  /* === Pantalla apagada (con botón ENCENDER) === */
-  .tv-off-screen {
-    position: absolute;
-    inset: 0;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 4;
-    transition: opacity 0.4s ease-out;
-  }
+  .tv-off-screen { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 4; transition: opacity 0.4s ease-out; }
+  .tv-off-screen.is-hidden { opacity: 0; pointer-events: none; }
 
-  .tv-off-screen.is-hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
+  .tv-power-button { background: #F5B800; border: 1.5px solid #000; box-shadow: inset 1px 1px 0 rgba(255,255,255,0.4), inset -1px -1px 0 rgba(0,0,0,0.3), 3px 3px 0 rgba(0,0,0,0.7); padding: 12px 24px; cursor: pointer; font-family: 'Press Start 2P', monospace; font-size: 13px; color: #000; letter-spacing: 1.5px; transition: transform 0.05s; }
+  .tv-power-button:hover { background: #ffcc00; }
+  .tv-power-button:active { transform: translate(2px, 2px); box-shadow: inset 1px 1px 0 rgba(0,0,0,0.3), inset -1px -1px 0 rgba(255,255,255,0.4), 1px 1px 0 rgba(0,0,0,0.6); }
+  .tv-power-button:disabled { opacity: 0.6; cursor: wait; }
+  .power-arrow { margin-right: 6px; }
 
-  .tv-power-button {
-    background: #F5B800;
-    border: 1.5px solid #000;
-    box-shadow:
-      inset 1px 1px 0 rgba(255, 255, 255, 0.4),
-      inset -1px -1px 0 rgba(0, 0, 0, 0.3),
-      3px 3px 0 rgba(0, 0, 0, 0.7);
-    padding: 12px 24px;
-    cursor: pointer;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
-    color: #000;
-    letter-spacing: 1.5px;
-    transition: transform 0.05s;
-  }
+  .tv-video-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+  #youtube-player { width: 100%; height: 100%; }
 
-  .tv-power-button:hover {
-    background: #ffcc00;
-  }
+  .tv-crt-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 6; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%), repeating-linear-gradient(0deg, rgba(80,250,123,0.04) 0, rgba(80,250,123,0.04) 1px, transparent 1px, transparent 3px); }
 
-  .tv-power-button:active {
-    transform: translate(2px, 2px);
-    box-shadow:
-      inset 1px 1px 0 rgba(0, 0, 0, 0.3),
-      inset -1px -1px 0 rgba(255, 255, 255, 0.4),
-      1px 1px 0 rgba(0, 0, 0, 0.6);
-  }
+  /* Tinte de color por canal */
+  .tv-channel-tint { position: absolute; inset: 0; pointer-events: none; z-index: 5; background: var(--ch-color, transparent); opacity: 0.06; mix-blend-mode: screen; transition: background 0.6s ease; }
 
-  .power-arrow {
-    margin-right: 6px;
-  }
+  .tv-static-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 7; opacity: 0; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='3' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/></svg>"); background-size: 200px 200px; transition: opacity 0.15s; }
+  .tv-static-overlay.is-active { opacity: 1; animation: static-flicker 0.05s infinite; }
+  @keyframes static-flicker { 0% { background-position: 0 0; } 25% { background-position: -100px 50px; } 50% { background-position: 50px -100px; } 75% { background-position: -50px -50px; } 100% { background-position: 100px 100px; } }
 
-  /* === Contenedor del iframe de YouTube === */
-  .tv-video-container {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  /* Truco para zoomear el iframe y ocultar los bordes de YouTube */
-  overflow: hidden;
-}
+  .tv-video-meta { position: absolute; bottom: 36px; left: 14px; z-index: 5; color: #fff; font-family: 'Press Start 2P', monospace; text-shadow: 1px 1px 0 rgba(0,0,0,0.9); line-height: 1.3; }
+  .tv-channel-label { font-size: 13px; margin-bottom: 4px; color: var(--ch-color, #fff); transition: color 0.6s ease; }
+  .tv-date-label { font-size: 11px; opacity: 0.9; }
 
-.tv-video-container iframe {
-  position: absolute;
-  /* Escalamos el iframe 1.5x y lo centramos, así los controles de YouTube
-     quedan fuera del área visible */
-  width: 130% !important;
-  height: 130% !important;
-  top: -15% !important;
-  left: -15% !important;
-  pointer-events: none; /* impide que el usuario interactúe con el iframe directo */
-}
+  .tv-video-footer { position: absolute; bottom: 0; left: 0; right: 0; height: 22px; z-index: 5; background: rgba(0,0,0,0.85); display: flex; align-items: center; padding: 0 6px; gap: 6px; border-top: 1px solid #333; }
+  .tv-controls-mini { display: flex; gap: 2px; align-items: center; }
+  .tv-fullscreen-mini { display: flex; align-items: center; margin-left: auto; }
+  .mini-icon { width: 14px; height: 14px; image-rendering: pixelated; opacity: 0.85; cursor: pointer; }
+  .mini-icon:hover { opacity: 1; }
+  .tv-filename { color: #fff; font-family: 'VT323', monospace; font-size: 12px; opacity: 0.85; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  #youtube-player {
-    width: 100%;
-    height: 100%;
-  }
+  .tv-controls-panel { background: #ffffff; border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; padding: 10px 14px; flex-shrink: 0; }
+  .tv-info-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .tv-info-text { flex: 1; min-width: 0; }
+  .tv-title { font-family: 'Chicago FLF', sans-serif; font-size: 12px; color: #000; line-height: 1.3; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .tv-artist { font-family: 'Chicago FLF', sans-serif; font-size: 11px; color: #555; }
+  .tv-info-buttons { display: flex; gap: 4px; flex-shrink: 0; }
+  .tv-icon-button { background: #d4d0c8; border: 1px solid #000; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .tv-icon-button:hover { background: #c0bcb4; }
+  .tv-icon-button:active { box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
+  .tv-icon-button img { width: 14px; height: 14px; image-rendering: pixelated; }
 
-  /* === Overlay CRT (scanlines + viñeta) === */
-  .tv-crt-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 6;
-    background:
-      /* Viñeta */
-      radial-gradient(
-        ellipse at center,
-        transparent 50%,
-        rgba(0, 0, 0, 0.4) 100%
-      ),
-      /* Scanlines verdes sutiles */
-      repeating-linear-gradient(
-        0deg,
-        rgba(80, 250, 123, 0.04) 0,
-        rgba(80, 250, 123, 0.04) 1px,
-        transparent 1px,
-        transparent 3px
-      );
-  }
+  .tv-controls-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .tv-time-display { font-family: 'VT323', monospace; font-size: 16px; color: #000; display: flex; align-items: center; gap: 6px; }
+  .tv-time-arrow { color: #000; }
+  .tv-playback-controls { display: flex; gap: 4px; }
+  .tv-control-btn { background: #d4d0c8; border: 1px solid #000; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; width: 38px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .tv-control-btn:hover { background: #c0bcb4; }
+  .tv-control-btn:active { box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
+  .tv-control-btn img { width: 18px; height: 18px; image-rendering: pixelated; }
 
-  /* === Overlay de static/ruido para transiciones === */
-  .tv-static-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 7;
-    opacity: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='3' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/></svg>");
-    background-size: 200px 200px;
-    transition: opacity 0.15s;
-  }
+  .tv-statusbar { background: #d4d0c8; padding: 6px 8px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; border-top: 1px solid #808080; }
+  .tv-channel-selector { flex: 1; position: relative; background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; height: 22px; display: flex; align-items: center; padding: 0 8px; gap: 6px; font-family: 'Chicago FLF', sans-serif; font-size: 11px; color: #000; }
+  .channel-label { color: #000; flex-shrink: 0; }
+  .tv-channel-dropdown { flex: 1; border: none; background: transparent; font-family: 'Chicago FLF', sans-serif; font-size: 11px; color: #000; outline: none; appearance: none; cursor: pointer; padding-right: 16px; }
+  .dropdown-arrow { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; image-rendering: pixelated; pointer-events: none; }
 
-  .tv-static-overlay.is-active {
-    opacity: 1;
-    animation: static-flicker 0.05s infinite;
-  }
+  .tv-volume-control { background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; height: 22px; display: flex; align-items: center; padding: 0 6px; gap: 6px; width: 140px; }
+  .tv-volume-toggle { background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; }
+  .tv-volume-toggle img { width: 14px; height: 14px; image-rendering: pixelated; }
+  .tv-volume-slider-wrapper { flex: 1; position: relative; height: 12px; background: repeating-linear-gradient(90deg, #000 0, #000 1px, #888 1px, #888 2px); border: 1px inset #888; }
+  .tv-volume-slider { -webkit-appearance: none; appearance: none; position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; cursor: pointer; margin: 0; }
+  .tv-volume-slider::-webkit-slider-runnable-track { height: 100%; background: linear-gradient(to right, var(--ch-color, #000080) 0%, var(--ch-color, #000080) var(--fill-percent, 70%), transparent var(--fill-percent, 70%)); }
+  .tv-volume-slider::-moz-range-track { height: 100%; background: linear-gradient(to right, var(--ch-color, #000080) 0%, var(--ch-color, #000080) var(--fill-percent, 70%), transparent var(--fill-percent, 70%)); }
+  .tv-volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 10px; height: 14px; background: #d4d0c8; border: 1px solid #000; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: grab; margin-top: -1px; }
+  .tv-volume-slider::-moz-range-thumb { width: 10px; height: 14px; background: #d4d0c8; border: 1px solid #000; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; cursor: grab; }
 
-  @keyframes static-flicker {
-    0% { background-position: 0 0; }
-    25% { background-position: -100px 50px; }
-    50% { background-position: 50px -100px; }
-    75% { background-position: -50px -50px; }
-    100% { background-position: 100px 100px; }
-  }
-
-  /* === Metadata sobre el video (CH 01, fecha) === */
-  .tv-video-meta {
-    position: absolute;
-    bottom: 36px;
-    left: 14px;
-    z-index: 5;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    text-shadow: 1px 1px 0 rgba(0,0,0,0.9);
-    line-height: 1.3;
-  }
-
-  .tv-channel-label {
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
-
-  .tv-date-label {
-    font-size: 11px;
-    opacity: 0.9;
-  }
-
-  /* === Footer del video (filename + mini controls) === */
-  .tv-video-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 22px;
-    z-index: 5;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
-    gap: 6px;
-    border-top: 1px solid #333;
-  }
-
-  .tv-controls-mini {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-  }
-
-  .tv-fullscreen-mini {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-
-  .mini-icon {
-    width: 14px;
-    height: 14px;
-    image-rendering: pixelated;
-    opacity: 0.85;
-    cursor: pointer;
-  }
-
-  .mini-icon:hover {
-    opacity: 1;
-  }
-
-  .tv-filename {
-    color: #fff;
-    font-family: 'VT323', monospace;
-    font-size: 12px;
-    opacity: 0.85;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* ========================================
-     PANEL BLANCO DE CONTROLES
-     ======================================== */
-  .tv-controls-panel {
-    background: #ffffff;
-    border-top: 1.5px solid #000;
-    border-bottom: 1.5px solid #000;
-    padding: 10px 14px;
-    flex-shrink: 0;
-  }
-
-  /* Fila título + info */
-  .tv-info-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .tv-info-text {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .tv-title {
-    font-family: 'Chicago FLF', sans-serif;
-    font-size: 12px;
-    color: #000;
-    line-height: 1.3;
-    margin-bottom: 2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-
-  .tv-artist {
-    font-family: 'Chicago FLF', sans-serif;
-    font-size: 11px;
-    color: #555;
-  }
-
-  .tv-info-buttons {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-
-  .tv-icon-button {
-    background: #d4d0c8;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .tv-icon-button:hover {
-    background: #c0bcb4;
-  }
-
-  .tv-icon-button:active {
-    box-shadow:
-      inset 1px 1px 0 #808080,
-      inset -1px -1px 0 #fff;
-  }
-
-  .tv-icon-button img {
-    width: 14px;
-    height: 14px;
-    image-rendering: pixelated;
-  }
-
-  /* Fila tiempo + controles */
-  .tv-controls-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .tv-time-display {
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: #000;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .tv-time-arrow {
-    color: #000;
-  }
-
-  .tv-playback-controls {
-    display: flex;
-    gap: 4px;
-  }
-
-  .tv-control-btn {
-    background: #d4d0c8;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
-    width: 38px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-  }
-
-  .tv-control-btn:hover {
-    background: #c0bcb4;
-  }
-
-  .tv-control-btn:active {
-    box-shadow:
-      inset 1px 1px 0 #808080,
-      inset -1px -1px 0 #fff;
-  }
-
-  .tv-control-btn img {
-    width: 18px;
-    height: 18px;
-    image-rendering: pixelated;
-  }
-
-  /* ========================================
-     STATUSBAR INFERIOR GRIS
-     ======================================== */
-  .tv-statusbar {
-    background: #d4d0c8;
-    padding: 6px 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-    border-top: 1px solid #808080;
-  }
-
-  /* === Selector de canal === */
-  .tv-channel-selector {
-    flex: 1;
-    position: relative;
-    background: #fff;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #808080,
-      inset -1px -1px 0 #fff;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    gap: 6px;
-    font-family: 'Chicago FLF', sans-serif;
-    font-size: 11px;
-    color: #000;
-  }
-
-  .channel-label {
-    color: #000;
-    flex-shrink: 0;
-  }
-
-  .tv-channel-dropdown {
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-family: 'Chicago FLF', sans-serif;
-    font-size: 11px;
-    color: #000;
-    outline: none;
-    appearance: none;
-    cursor: pointer;
-    padding-right: 16px;
-  }
-
-  .dropdown-arrow {
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    image-rendering: pixelated;
-    pointer-events: none;
-  }
-
-  /* === Control de volumen === */
-  .tv-volume-control {
-    background: #fff;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #808080,
-      inset -1px -1px 0 #fff;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
-    gap: 6px;
-    width: 140px;
-  }
-
-  .tv-volume-toggle {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-
-  .tv-volume-toggle img {
-    width: 14px;
-    height: 14px;
-    image-rendering: pixelated;
-  }
-
-  .tv-volume-slider-wrapper {
-    flex: 1;
-    position: relative;
-    height: 12px;
-    background: repeating-linear-gradient(
-      90deg,
-      #000 0,
-      #000 1px,
-      #888 1px,
-      #888 2px
-    );
-    border: 1px inset #888;
-  }
-
-  /* === Slider de volumen (input range stylizado) === */
-  .tv-volume-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    cursor: pointer;
-    margin: 0;
-  }
-
-  /* Track del slider (la "barra rellena" que cubre el dithered) */
-  .tv-volume-slider::-webkit-slider-runnable-track {
-    height: 100%;
-    background: linear-gradient(
-      to right,
-      #000080 0%,
-      #000080 var(--fill-percent, 70%),
-      transparent var(--fill-percent, 70%)
-    );
-  }
-
-  .tv-volume-slider::-moz-range-track {
-    height: 100%;
-    background: linear-gradient(
-      to right,
-      #000080 0%,
-      #000080 var(--fill-percent, 70%),
-      transparent var(--fill-percent, 70%)
-    );
-  }
-
-  /* Thumb del slider (la perilla) */
-  .tv-volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 10px;
-    height: 14px;
-    background: #d4d0c8;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
-    cursor: grab;
-    margin-top: -1px;
-  }
-
-  .tv-volume-slider::-moz-range-thumb {
-    width: 10px;
-    height: 14px;
-    background: #d4d0c8;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
-    cursor: grab;
-  }
-
-  /* === Botón fullscreen === */
-  .tv-fullscreen-btn {
-    background: #d4d0c8;
-    border: 1px solid #000;
-    box-shadow:
-      inset 1px 1px 0 #fff,
-      inset -1px -1px 0 #808080;
-    width: 26px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    flex-shrink: 0;
-  }
-
-  .tv-fullscreen-btn:hover {
-    background: #c0bcb4;
-  }
-
-  .tv-fullscreen-btn:active {
-    box-shadow:
-      inset 1px 1px 0 #808080,
-      inset -1px -1px 0 #fff;
-  }
-
-  .tv-fullscreen-btn img {
-    width: 14px;
-    height: 14px;
-    image-rendering: pixelated;
-  }
+  .tv-fullscreen-btn { background: #d4d0c8; border: 1px solid #000; box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080; width: 26px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex-shrink: 0; }
+  .tv-fullscreen-btn:hover { background: #c0bcb4; }
+  .tv-fullscreen-btn:active { box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #fff; }
+  .tv-fullscreen-btn img { width: 14px; height: 14px; image-rendering: pixelated; }
 </style>
-<script>
-  // ========================================
-  // TV PLAYER — Lógica de Línea 152
-  // ========================================
 
-  // Estado global del player
+<script>
   const tvState = {
-    isOn: false,           // si la TV está prendida
-    isPlaying: false,      // si está reproduciendo
-    isMuted: false,        // si está muteado
-    volume: 70,            // volumen 0-100
-    currentChannelIdx: 0,  // índice del canal actual
-    currentClipIdx: 0,     // índice del clip actual dentro del canal
-    youtubePlayer: null,   // referencia al iframe player de YouTube
-    timeUpdateInterval: null, // interval para actualizar el tiempo
-    channels: [],          // se carga del JSON embebido
+    isOn: false, isPlaying: false, isMuted: false, volume: 70,
+    currentChannelIdx: 0, currentClipIdx: 0,
+    youtubePlayer: null, timeUpdateInterval: null, channels: [],
   };
 
-  // === Cargar datos de canales desde el JSON embebido ===
   function loadChannels() {
     const dataEl = document.getElementById('tv-channels-data');
     if (!dataEl) return [];
-    try {
-      return JSON.parse(dataEl.textContent || '[]');
-    } catch (err) {
-      console.error('Error parsing channels:', err);
-      return [];
-    }
+    try { return JSON.parse(dataEl.textContent || '[]'); }
+    catch (err) { console.error('Error parsing channels:', err); return []; }
   }
 
-  // === Cargar la API de YouTube IFrame ===
   function loadYouTubeAPI() {
     return new Promise((resolve) => {
-      // Si ya está cargada
-      if (window.YT && window.YT.Player) {
-        resolve();
-        return;
-      }
-      // Crear el script tag
+      if (window.YT && window.YT.Player) { resolve(); return; }
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
       const firstScript = document.getElementsByTagName('script')[0];
       firstScript.parentNode.insertBefore(tag, firstScript);
-
-      // YouTube llamará a esta función global cuando esté lista
-      window.onYouTubeIframeAPIReady = () => {
-        resolve();
-      };
+      window.onYouTubeIframeAPIReady = () => { resolve(); };
     });
   }
 
-  // === Crear el player de YouTube ===
   function createYouTubePlayer(clip) {
-  return new Promise((resolve) => {
-    tvState.youtubePlayer = new YT.Player('youtube-player', {
-      height: '100%',
-      width: '100%',
-      videoId: clip.youtubeId,
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        modestbranding: 1,
-        rel: 0,
-        showinfo: 0,
-        iv_load_policy: 3,
-        start: clip.startSeconds,
-        end: clip.endSeconds,
-        playsinline: 1,
-        cc_load_policy: 0,
-        color: 'white',
-        enablejsapi: 1,
-      },
-      events: {
-        onReady: (event) => {
-          event.target.setVolume(tvState.volume);
-          // Aplicar el "zoom" al iframe para esconder branding de YouTube
-          applyIframeZoom();
-          resolve(event.target);
+    return new Promise((resolve) => {
+      tvState.youtubePlayer = new YT.Player('youtube-player', {
+        height: '100%', width: '100%', videoId: clip.youtubeId,
+        playerVars: {
+          autoplay: 0, controls: 0, disablekb: 1, fs: 0, modestbranding: 1,
+          rel: 0, showinfo: 0, iv_load_policy: 3,
+          start: clip.startSeconds, end: clip.endSeconds,
+          playsinline: 1, cc_load_policy: 0, color: 'white', enablejsapi: 1,
         },
-        onStateChange: onPlayerStateChange,
-      },
+        events: {
+          onReady: (event) => {
+            event.target.setVolume(tvState.volume);
+            applyIframeZoom();
+            resolve(event.target);
+          },
+          onStateChange: onPlayerStateChange,
+          onError: onPlayerError,
+        },
+      });
     });
-  });
-}
+  }
 
-// === Esconder branding de YouTube escalando el iframe ===
-function applyIframeZoom() {
-  const iframe = document.querySelector('#youtube-player');
-  if (!iframe) return;
-  iframe.style.position = 'absolute';
-  iframe.style.width = '180%';
-  iframe.style.height = '180%';
-  iframe.style.top = '-40%';
-  iframe.style.left = '-40%';
-  iframe.style.pointerEvents = 'none';
-}
+  function applyIframeZoom() {
+    const iframe = document.querySelector('#youtube-player');
+    if (!iframe) return;
+    iframe.style.position = 'absolute';
+    iframe.style.width = '180%';
+    iframe.style.height = '180%';
+    iframe.style.top = '-40%';
+    iframe.style.left = '-40%';
+    iframe.style.pointerEvents = 'none';
+  }
 
-  // === Manejar cambios de estado del video (play/pause/ended) ===
   function onPlayerStateChange(event) {
-    // YT.PlayerState.ENDED === 0
-    // YT.PlayerState.PLAYING === 1
-    // YT.PlayerState.PAUSED === 2
     if (event.data === 0) {
-      // Video terminó → siguiente clip con transición de static
       nextClip();
     } else if (event.data === 1) {
       tvState.isPlaying = true;
@@ -852,74 +324,93 @@ function applyIframeZoom() {
     }
   }
 
-  // === Encender la TV (primera vez) ===
+  function onPlayerError(event) {
+    console.log('Video error code:', event.data);
+    nextClip();
+  }
+
+  function waitForPlayerReady() {
+    return new Promise((resolve) => {
+      const check = () => {
+        if (tvState.youtubePlayer &&
+            typeof tvState.youtubePlayer.playVideo === 'function' &&
+            typeof tvState.youtubePlayer.getCurrentTime === 'function') {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
+  }
+
   async function powerOnTV() {
     const offScreen = document.getElementById('tv-off-screen');
+    const powerBtn = document.getElementById('tv-power-button');
     if (!offScreen) return;
 
-    // Cargar API de YouTube si no está
-    await loadYouTubeAPI();
+    if (powerBtn) powerBtn.disabled = true;
 
-    // Crear el player con el primer clip del canal actual
-    const currentClip = getCurrentClip();
-    if (!currentClip) return;
+    try {
+      await loadYouTubeAPI();
+      const currentClip = getCurrentClip();
+      if (!currentClip) return;
 
-    await createYouTubePlayer(currentClip);
+      await createYouTubePlayer(currentClip);
+      tvState.isOn = true;
+      offScreen.classList.add('is-hidden');
 
-    // Reproducir
-    tvState.youtubePlayer.playVideo();
-    tvState.isOn = true;
-
-    // Ocultar la pantalla apagada
-    offScreen.classList.add('is-hidden');
+      await waitForPlayerReady();
+      if (tvState.youtubePlayer && typeof tvState.youtubePlayer.playVideo === 'function') {
+        tvState.youtubePlayer.playVideo();
+      }
+    } catch (err) {
+      console.error('Error encendiendo TV:', err);
+      if (powerBtn) powerBtn.disabled = false;
+    }
   }
 
-  // === Obtener canal y clip actual ===
-  function getCurrentChannel() {
-    return tvState.channels[tvState.currentChannelIdx];
-  }
-
+  function getCurrentChannel() { return tvState.channels[tvState.currentChannelIdx]; }
   function getCurrentClip() {
     const ch = getCurrentChannel();
     return ch ? ch.clips[tvState.currentClipIdx] : null;
   }
 
-  // === Mostrar el static y cargar siguiente clip ===
+  function applyChannelColor() {
+    const channel = getCurrentChannel();
+    if (!channel) return;
+    const player = document.getElementById('tv-player');
+    if (player) player.style.setProperty('--ch-color', channel.color);
+  }
+
   function showStaticTransition(callback) {
     const staticOverlay = document.getElementById('tv-static-overlay');
-    if (!staticOverlay) {
-      if (callback) callback();
-      return;
-    }
-
+    if (!staticOverlay) { if (callback) callback(); return; }
     staticOverlay.classList.add('is-active');
-
     setTimeout(() => {
       if (callback) callback();
-      // Mantener static un poquito más mientras carga el siguiente
-      setTimeout(() => {
-        staticOverlay.classList.remove('is-active');
-      }, 400);
+      setTimeout(() => { staticOverlay.classList.remove('is-active'); }, 400);
     }, 350);
   }
 
-  // === Cargar un clip específico en el player ===
   function loadClip(clip) {
-    if (!tvState.youtubePlayer || !clip) return;
-
-    tvState.youtubePlayer.loadVideoById({
-      videoId: clip.youtubeId,
-      startSeconds: clip.startSeconds,
-      endSeconds: clip.endSeconds,
-    });
-
-    updateClipUI(clip);
+    if (!clip) return;
+    if (!tvState.youtubePlayer || typeof tvState.youtubePlayer.loadVideoById !== 'function') return;
+    try {
+      tvState.youtubePlayer.loadVideoById({
+        videoId: clip.youtubeId,
+        startSeconds: clip.startSeconds,
+        endSeconds: clip.endSeconds,
+      });
+      updateClipUI(clip);
+      applyChannelColor();
+    } catch (err) {
+      console.error('Error cargando clip:', err);
+    }
   }
 
-  // === Actualizar la UI con datos del clip actual ===
   function updateClipUI(clip) {
     const channel = getCurrentChannel();
-
     const channelLabel = document.getElementById('tv-channel-label');
     const dateLabel = document.getElementById('tv-date-label');
     const filename = document.getElementById('tv-filename');
@@ -933,33 +424,27 @@ function applyIframeZoom() {
     if (artist) artist.textContent = clip.artist;
   }
 
-  // === Ir al siguiente clip ===
   function nextClip() {
     const channel = getCurrentChannel();
     if (!channel) return;
-
     showStaticTransition(() => {
       tvState.currentClipIdx = (tvState.currentClipIdx + 1) % channel.clips.length;
       loadClip(getCurrentClip());
     });
   }
 
-  // === Ir al clip anterior ===
   function prevClip() {
     const channel = getCurrentChannel();
     if (!channel) return;
-
     showStaticTransition(() => {
       tvState.currentClipIdx = (tvState.currentClipIdx - 1 + channel.clips.length) % channel.clips.length;
       loadClip(getCurrentClip());
     });
   }
 
-  // === Cambiar de canal ===
   function changeChannel(channelId) {
     const idx = tvState.channels.findIndex(c => c.id === channelId);
     if (idx === -1) return;
-
     showStaticTransition(() => {
       tvState.currentChannelIdx = idx;
       tvState.currentClipIdx = 0;
@@ -967,33 +452,33 @@ function applyIframeZoom() {
     });
   }
 
-  // === Play / Pause ===
   function playVideo() {
-    if (tvState.youtubePlayer && tvState.isOn) {
+    if (tvState.youtubePlayer && tvState.isOn && typeof tvState.youtubePlayer.playVideo === 'function') {
       tvState.youtubePlayer.playVideo();
     }
   }
 
   function pauseVideo() {
-    if (tvState.youtubePlayer && tvState.isOn) {
+    if (tvState.youtubePlayer && tvState.isOn && typeof tvState.youtubePlayer.pauseVideo === 'function') {
       tvState.youtubePlayer.pauseVideo();
     }
   }
 
-  // === Actualizar el tiempo mostrado ===
   function startTimeUpdate() {
     stopTimeUpdate();
     tvState.timeUpdateInterval = setInterval(() => {
       if (!tvState.youtubePlayer || !tvState.isOn) return;
-      const currentTime = tvState.youtubePlayer.getCurrentTime();
-      const clip = getCurrentClip();
-      if (!clip) return;
-      // Mostrar tiempo relativo al inicio del clip
-      const relativeTime = currentTime - clip.startSeconds;
-      const mm = String(Math.floor(relativeTime / 60)).padStart(2, '0');
-      const ss = String(Math.floor(relativeTime % 60)).padStart(2, '0');
-      const timeEl = document.getElementById('tv-current-time');
-      if (timeEl) timeEl.textContent = `${mm}:${ss}`;
+      if (typeof tvState.youtubePlayer.getCurrentTime !== 'function') return;
+      try {
+        const currentTime = tvState.youtubePlayer.getCurrentTime();
+        const clip = getCurrentClip();
+        if (!clip) return;
+        const relativeTime = currentTime - clip.startSeconds;
+        const mm = String(Math.floor(relativeTime / 60)).padStart(2, '0');
+        const ss = String(Math.floor(relativeTime % 60)).padStart(2, '0');
+        const timeEl = document.getElementById('tv-current-time');
+        if (timeEl) timeEl.textContent = `${mm}:${ss}`;
+      } catch (err) {}
     }, 500);
   }
 
@@ -1004,18 +489,13 @@ function applyIframeZoom() {
     }
   }
 
-  // === Volumen ===
   function setVolume(value) {
     tvState.volume = value;
-    if (tvState.youtubePlayer && tvState.isOn) {
+    if (tvState.youtubePlayer && tvState.isOn && typeof tvState.youtubePlayer.setVolume === 'function') {
       tvState.youtubePlayer.setVolume(value);
     }
-    // Actualizar visualmente el slider (la parte rellena)
     const slider = document.getElementById('tv-volume-slider');
-    if (slider) {
-      slider.style.setProperty('--fill-percent', `${value}%`);
-    }
-    // Si el volumen sube por encima de 0, desmutear el icono
+    if (slider) slider.style.setProperty('--fill-percent', `${value}%`);
     if (value > 0 && tvState.isMuted) {
       tvState.isMuted = false;
       updateVolumeIcon();
@@ -1025,9 +505,9 @@ function applyIframeZoom() {
   function toggleMute() {
     tvState.isMuted = !tvState.isMuted;
     if (tvState.youtubePlayer && tvState.isOn) {
-      if (tvState.isMuted) {
+      if (tvState.isMuted && typeof tvState.youtubePlayer.mute === 'function') {
         tvState.youtubePlayer.mute();
-      } else {
+      } else if (typeof tvState.youtubePlayer.unMute === 'function') {
         tvState.youtubePlayer.unMute();
       }
     }
@@ -1042,57 +522,41 @@ function applyIframeZoom() {
       : '/images/tvplayer/icon-volume.png';
   }
 
-  // === Fullscreen ===
   function toggleFullscreen() {
     const tvPlayer = document.getElementById('tv-player');
     if (!tvPlayer) return;
-
     if (!document.fullscreenElement) {
-      tvPlayer.requestFullscreen().catch(err => {
-        console.log('No se pudo abrir fullscreen:', err.message);
-      });
+      tvPlayer.requestFullscreen().catch(err => console.log('No se pudo abrir fullscreen:', err.message));
     } else {
       document.exitFullscreen();
     }
   }
 
-  // === Inicialización ===
   function initTVPlayer() {
-    // Cargar canales
     tvState.channels = loadChannels();
     if (tvState.channels.length === 0) {
       console.warn('No hay canales cargados en TVPlayer');
       return;
     }
 
-    // Inicializar UI con primer clip
     const firstClip = getCurrentClip();
     if (firstClip) updateClipUI(firstClip);
-
-    // Inicializar el volumen visual
+    applyChannelColor();
     setVolume(tvState.volume);
 
-    // === Bindings de botones ===
-
-    // Botón ENCENDER TV
     const powerBtn = document.getElementById('tv-power-button');
-    if (powerBtn) {
-      powerBtn.addEventListener('click', powerOnTV);
-    }
+    if (powerBtn) powerBtn.addEventListener('click', powerOnTV);
 
-    // Play / Pause
     const playBtn = document.getElementById('tv-play-btn');
     const pauseBtn = document.getElementById('tv-pause-btn');
     if (playBtn) playBtn.addEventListener('click', playVideo);
     if (pauseBtn) pauseBtn.addEventListener('click', pauseVideo);
 
-    // Next / Prev
     const nextBtn = document.getElementById('tv-next-btn');
     const prevBtn = document.getElementById('tv-prev-btn');
     if (nextBtn) nextBtn.addEventListener('click', nextClip);
     if (prevBtn) prevBtn.addEventListener('click', prevClip);
 
-    // Volume slider
     const volumeSlider = document.getElementById('tv-volume-slider');
     if (volumeSlider) {
       volumeSlider.addEventListener('input', (e) => {
@@ -1100,24 +564,18 @@ function applyIframeZoom() {
       });
     }
 
-    // Volume toggle (mute)
     const volumeToggle = document.getElementById('tv-volume-toggle');
     if (volumeToggle) volumeToggle.addEventListener('click', toggleMute);
 
-    // Channel selector
     const channelSelect = document.getElementById('tv-channel-select');
     if (channelSelect) {
-      channelSelect.addEventListener('change', (e) => {
-        changeChannel(e.target.value);
-      });
+      channelSelect.addEventListener('change', (e) => changeChannel(e.target.value));
     }
 
-    // Fullscreen
     const fullscreenBtn = document.getElementById('tv-fullscreen-btn');
     if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
   }
 
-  // Arrancar cuando el DOM esté listo
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initTVPlayer);
   } else {
