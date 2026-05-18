@@ -1,8 +1,7 @@
 ---
-// TVPlayer.astro
-// Componente del reproductor de TV — Línea 152
+import { sanityClient, channelsQuery } from '../lib/sanity.js';
 
-const channels = [
+const FALLBACK_CHANNELS = [
   {
     id: 'diego',
     number: '01',
@@ -74,6 +73,15 @@ const channels = [
     ],
   },
 ];
+
+let channels = FALLBACK_CHANNELS;
+try {
+  const data = await sanityClient.fetch(channelsQuery);
+  const valid = data.filter((ch) => ch.clips && ch.clips.length > 0);
+  if (valid.length > 0) channels = valid;
+} catch (err) {
+  console.warn('[TVPlayer] No se pudo conectar a Sanity, usando datos locales:', err.message);
+}
 
 const initialChannel = channels[0];
 const initialClip = initialChannel.clips[0];
@@ -258,7 +266,21 @@ const initialClip = initialChannel.clips[0];
     isOn: false, isPlaying: false, isMuted: false, volume: 70,
     currentChannelIdx: 0, currentClipIdx: 0,
     youtubePlayer: null, timeUpdateInterval: null, channels: [],
+    shuffledPlaylists: [],
   };
+
+  function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function initPlaylists() {
+    tvState.shuffledPlaylists = tvState.channels.map(ch => shuffleArray(ch.clips));
+  }
 
   function loadChannels() {
     const dataEl = document.getElementById('tv-channels-data');
@@ -372,8 +394,8 @@ const initialClip = initialChannel.clips[0];
 
   function getCurrentChannel() { return tvState.channels[tvState.currentChannelIdx]; }
   function getCurrentClip() {
-    const ch = getCurrentChannel();
-    return ch ? ch.clips[tvState.currentClipIdx] : null;
+    const playlist = tvState.shuffledPlaylists[tvState.currentChannelIdx];
+    return playlist ? playlist[tvState.currentClipIdx] : null;
   }
 
   function applyChannelColor() {
@@ -425,19 +447,22 @@ const initialClip = initialChannel.clips[0];
   }
 
   function nextClip() {
-    const channel = getCurrentChannel();
-    if (!channel) return;
+    if (!getCurrentChannel()) return;
     showStaticTransition(() => {
-      tvState.currentClipIdx = (tvState.currentClipIdx + 1) % channel.clips.length;
+      const playlist = tvState.shuffledPlaylists[tvState.currentChannelIdx];
+      tvState.currentClipIdx++;
+      if (tvState.currentClipIdx >= playlist.length) {
+        tvState.shuffledPlaylists[tvState.currentChannelIdx] = shuffleArray(tvState.channels[tvState.currentChannelIdx].clips);
+        tvState.currentClipIdx = 0;
+      }
       loadClip(getCurrentClip());
     });
   }
 
   function prevClip() {
-    const channel = getCurrentChannel();
-    if (!channel) return;
+    if (!getCurrentChannel()) return;
     showStaticTransition(() => {
-      tvState.currentClipIdx = (tvState.currentClipIdx - 1 + channel.clips.length) % channel.clips.length;
+      tvState.currentClipIdx = Math.max(0, tvState.currentClipIdx - 1);
       loadClip(getCurrentClip());
     });
   }
@@ -538,6 +563,8 @@ const initialClip = initialChannel.clips[0];
       console.warn('No hay canales cargados en TVPlayer');
       return;
     }
+
+    initPlaylists();
 
     const firstClip = getCurrentClip();
     if (firstClip) updateClipUI(firstClip);

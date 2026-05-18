@@ -132,9 +132,5 @@ const {
   line-height: 1.4;
 }
 
-/* Ventanas con módulos especiales no llevan padding */
-.window:has(.tv-player) .window-body {
-  padding: 0;
-  overflow: hidden;
-}
+/* Ventanas con módulos especiales no llevan padding — is:global para cross-component */
 </style>

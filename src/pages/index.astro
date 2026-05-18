@@ -6,6 +6,7 @@ import Window from '../components/Window.astro';
 import Dock from '../components/Dock.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
 import TVPlayer from '../components/TVPlayer.astro';
+import RadioPlayer from '../components/RadioPlayer.astro';
 ---
 
 <html lang="es">
@@ -37,10 +38,8 @@ import TVPlayer from '../components/TVPlayer.astro';
   <TVPlayer />
 </Window>
 
-      <Window id="radio" title="Radio Porteña" width={300} height={260} initialX={220} initialY={110}>
-        <p><strong>Radio — placeholder</strong></p>
-        <p>4 estaciones: FM Almagro, City, Latido, AM Conurbano.</p>
-        <p style="margin-top:8px;opacity:0.6;">[Construcción en Fase 4]</p>
+      <Window id="radio" title="Radio Porteña — LÍNEA 152" width={500} height={430} initialX={220} initialY={50}>
+        <RadioPlayer />
       </Window>
 
       <Window id="mapa" title="Mapa BSAS — bsas.bmp" width={420} height={320} initialX={260} initialY={90}>
@@ -96,6 +95,13 @@ import TVPlayer from '../components/TVPlayer.astro';
 </html>
 
 <style is:global>
+  /* Ventanas con contenido especial: sin padding en el body */
+  .window:has(.tv-player) .window-body,
+  .window:has(.radio-player) .window-body {
+    padding: 0;
+    overflow: hidden;
+  }
+
   @font-face {
     font-family: 'Chicago FLF';
     src: url('/fonts/ChicagoFLF.ttf') format('truetype');

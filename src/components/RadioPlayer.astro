@@ -1,0 +1,779 @@
+---
+import { sanityClient, estacionesQuery } from '../lib/sanity.js';
+
+const FALLBACK_ESTACIONES = [
+  {
+    id: 'la-balsa',
+    nombre: 'La Balsa',
+    genero: 'Rock nacional',
+    frecuencia: '89.9 FM',
+    colorPrimario: '#E63946',
+    descripcion: 'El rock que hizo historia',
+    orden: 1,
+    mixes: [],
+  },
+];
+
+let estaciones = FALLBACK_ESTACIONES;
+try {
+  const data = await sanityClient.fetch(estacionesQuery);
+  const valid = data.filter((e) => e.mixes && e.mixes.length > 0);
+  if (valid.length > 0) estaciones = valid;
+  else if (data.length > 0) estaciones = data;
+} catch (err) {
+  console.warn('[RadioPlayer] No se pudo conectar a Sanity, usando fallback:', err.message);
+}
+
+const initialEstacion = estaciones[0];
+const initialMix = initialEstacion?.mixes?.[0] ?? null;
+
+// Barras del visualizador de espectro (dur/delay/maxH predefinidos para look natural)
+const specBars = [
+  {dur:'0.45s',delay:'0.00s',maxH:55}, {dur:'0.70s',delay:'0.06s',maxH:82},
+  {dur:'0.38s',delay:'0.12s',maxH:70}, {dur:'0.85s',delay:'0.04s',maxH:90},
+  {dur:'0.52s',delay:'0.18s',maxH:60}, {dur:'0.63s',delay:'0.09s',maxH:78},
+  {dur:'0.41s',delay:'0.22s',maxH:95}, {dur:'0.76s',delay:'0.02s',maxH:65},
+  {dur:'0.48s',delay:'0.15s',maxH:88}, {dur:'0.58s',delay:'0.20s',maxH:50},
+  {dur:'0.82s',delay:'0.07s',maxH:75}, {dur:'0.44s',delay:'0.25s',maxH:92},
+  {dur:'0.66s',delay:'0.11s',maxH:58}, {dur:'0.37s',delay:'0.17s',maxH:80},
+  {dur:'0.79s',delay:'0.03s',maxH:68}, {dur:'0.53s',delay:'0.21s',maxH:85},
+  {dur:'0.42s',delay:'0.13s',maxH:62}, {dur:'0.68s',delay:'0.08s',maxH:72},
+];
+---
+
+<div class="radio-player" id="radio-player">
+
+  <!-- DISPLAY VFD ─────────────────────────────────────────────── -->
+  <div class="rp-display-panel">
+    <div class="rp-display-inner">
+
+      <div class="rp-display-left">
+        <div class="rp-vfd-station" id="rp-vfd-station">
+          {initialEstacion?.nombre?.toUpperCase() ?? 'SIN SEÑAL'}
+        </div>
+        <div class="rp-vfd-freq-row">
+          <span class="rp-vfd-freq-num" id="rp-vfd-freq-num">
+            {initialEstacion?.frecuencia?.replace(' FM','').replace(' AM','') ?? '--.-'}
+          </span>
+          <span class="rp-vfd-freq-sfx" id="rp-vfd-freq-sfx">
+            {initialEstacion?.frecuencia?.includes('AM') ? 'AM' : 'FM'}
+          </span>
+        </div>
+        <div class="rp-vfd-nowplaying">
+          <span class="rp-vfd-play-tri" id="rp-vfd-play-tri">▶</span>
+          <span class="rp-vfd-mix-title" id="rp-vfd-mix-title">
+            {initialMix?.titulo ?? 'SELECCIONÁ UNA ESTACIÓN'}
+          </span>
+        </div>
+      </div>
+
+      <div class="rp-display-right">
+        <span class="rp-signal-label">SIGNAL</span>
+        <div class="rp-signal-bars">
+          <span class="rp-sig-bar" style="height:4px"></span>
+          <span class="rp-sig-bar" style="height:7px"></span>
+          <span class="rp-sig-bar" style="height:10px"></span>
+          <span class="rp-sig-bar" style="height:13px"></span>
+          <span class="rp-sig-bar" style="height:16px"></span>
+          <span class="rp-sig-bar" style="height:19px"></span>
+        </div>
+      </div>
+
+      <div class="rp-display-scanlines"></div>
+    </div>
+  </div>
+
+  <!-- VISUALIZADOR DE ESPECTRO ─────────────────────────────────── -->
+  <div class="rp-spectrum-panel">
+    <div class="rp-spectrum-bars" id="rp-spectrum-bars">
+      {specBars.map(() => <div class="rp-spec-bar"></div>)}
+    </div>
+  </div>
+
+  <!-- CONTROLES ────────────────────────────────────────────────── -->
+  <div class="rp-controls-panel">
+
+    <div class="rp-buttons-group">
+      <button class="rp-btn" id="rp-play-btn" title="Play">▶</button>
+      <button class="rp-btn" id="rp-pause-btn" title="Pausa" style="display:none;">❚❚</button>
+      <button class="rp-btn" id="rp-prev-btn" title="Anterior">◀◀</button>
+      <button class="rp-btn" id="rp-next-btn" title="Siguiente">▶▶</button>
+    </div>
+
+    <div class="rp-volume-group">
+      <span class="rp-ctrl-label">VOLUME</span>
+      <div class="rp-vol-track">
+        <div class="rp-vol-fill" id="rp-vol-fill" style="width:70%"></div>
+        <input
+          type="range" min="0" max="100" value="70"
+          class="rp-vol-slider" id="rp-vol-slider"
+        />
+      </div>
+    </div>
+
+    <div class="rp-knob-group">
+      <div class="rp-knob">
+        <div class="rp-knob-mark"></div>
+      </div>
+      <span class="rp-ctrl-label">TONE</span>
+    </div>
+
+  </div>
+
+  <!-- LISTA DE ESTACIONES ──────────────────────────────────────── -->
+  <div class="rp-station-list" id="rp-station-list">
+    {estaciones.map((e, i) => (
+      <div
+        class={`rp-station-row${i === 0 ? ' is-active' : ''}`}
+        data-estacion-id={e.id}
+        data-color={e.colorPrimario}
+        style={i === 0 ? `--row-color:${e.colorPrimario}` : ''}
+        role="button"
+        tabindex="0"
+      >
+        <span class="rp-row-freq">{e.frecuencia}</span>
+        <span class="rp-row-info">
+          <span class="rp-row-name">{e.nombre}</span>
+          <span class="rp-row-genre"> — {e.genero}</span>
+        </span>
+        <span class="rp-row-indicator">{i === 0 ? '●' : '▶'}</span>
+      </div>
+    ))}
+  </div>
+
+</div>
+
+<!-- Datos de estaciones para el JS -->
+<script type="application/json" id="rp-estaciones-data" set:html={JSON.stringify(estaciones)}></script>
+
+<!-- Iframe oculto de SoundCloud -->
+<iframe
+  id="rp-sc-iframe"
+  src={initialMix?.soundcloudUrl
+    ? `https://w.soundcloud.com/player/?url=${encodeURIComponent(initialMix.soundcloudUrl)}&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false`
+    : 'about:blank'
+  }
+  allow="autoplay"
+  style="display:none;width:1px;height:1px;position:absolute;left:-9999px;"
+></iframe>
+
+<script>
+const rpState = {
+  isPlaying: false,
+  volume: 70,
+  currentEstacionIdx: 0,
+  currentMixIdx: 0,
+  estaciones: [],
+  widget: null,
+  widgetReady: false,
+  shuffledPlaylists: [],
+  specAnimId: null,
+  specValues: Array.from({length: 18}, () => Math.random() * 0.3 + 0.05),
+  specTargets: Array.from({length: 18}, () => Math.random()),
+};
+
+// ── Shuffle ───────────────────────────────────────────────────────
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function initPlaylists() {
+  rpState.shuffledPlaylists = rpState.estaciones.map(e =>
+    e.mixes?.length ? shuffleArray(e.mixes) : []
+  );
+}
+
+function getCurrentEstacion() { return rpState.estaciones[rpState.currentEstacionIdx]; }
+function getCurrentMix() {
+  return rpState.shuffledPlaylists[rpState.currentEstacionIdx]?.[rpState.currentMixIdx] ?? null;
+}
+
+// ── Spectrum (JS-driven cuando suena, CSS cuando pausa) ───────────
+let specFrameCount = 0;
+
+function animateSpectrum() {
+  specFrameCount++;
+  if (specFrameCount % 6 === 0) {
+    for (let i = 0; i < 18; i++) rpState.specTargets[i] = Math.random();
+  }
+  rpState.specValues = rpState.specValues.map((v, i) => v + (rpState.specTargets[i] - v) * 0.1);
+
+  document.querySelectorAll('.rp-spec-bar').forEach((bar, i) => {
+    bar.style.height = `${rpState.specValues[i] * 100}%`;
+  });
+  rpState.specAnimId = requestAnimationFrame(animateSpectrum);
+}
+
+function startSpectrum() {
+  if (rpState.specAnimId) return;
+  animateSpectrum();
+}
+
+function stopSpectrum() {
+  if (rpState.specAnimId) { cancelAnimationFrame(rpState.specAnimId); rpState.specAnimId = null; }
+  // Devuelve el control a la animación CSS
+  document.querySelectorAll('.rp-spec-bar').forEach(b => b.style.height = '');
+}
+
+// ── UI updates ────────────────────────────────────────────────────
+function updateDisplay() {
+  const e = getCurrentEstacion();
+  const mix = getCurrentMix();
+  const $ = id => document.getElementById(id);
+
+  $('rp-vfd-station').textContent  = e?.nombre?.toUpperCase() ?? 'SIN SEÑAL';
+  $('rp-vfd-freq-num').textContent = e?.frecuencia?.replace(/ FM| AM/g, '') ?? '--.-';
+  $('rp-vfd-freq-sfx').textContent = e?.frecuencia?.includes('AM') ? 'AM' : 'FM';
+  $('rp-vfd-mix-title').textContent = mix?.titulo ?? '---';
+
+  const tri = $('rp-vfd-play-tri');
+  if (tri) tri.classList.toggle('is-playing', rpState.isPlaying);
+}
+
+function updateStationList() {
+  const e = getCurrentEstacion();
+  document.querySelectorAll('.rp-station-row').forEach((row, i) => {
+    const active = i === rpState.currentEstacionIdx;
+    row.classList.toggle('is-active', active);
+    if (active) row.style.setProperty('--row-color', e.colorPrimario);
+    else row.style.removeProperty('--row-color');
+    row.querySelector('.rp-row-indicator').textContent = active ? '●' : '▶';
+  });
+}
+
+function updatePlayPauseButtons() {
+  const play  = document.getElementById('rp-play-btn');
+  const pause = document.getElementById('rp-pause-btn');
+  if (play)  play.style.display  = rpState.isPlaying ? 'none' : '';
+  if (pause) pause.style.display = rpState.isPlaying ? '' : 'none';
+}
+
+// ── Seek random ───────────────────────────────────────────────────
+function seekToRandom(delayMs = 600) {
+  setTimeout(() => {
+    if (!rpState.widget || !rpState.widgetReady) return;
+    rpState.widget.getDuration(duration => {
+      if (!duration) return;
+      // Entre 5% y 75% del archivo para evitar el final
+      const randomMs = Math.floor(duration * (0.05 + Math.random() * 0.70));
+      rpState.widget.seekTo(randomMs);
+    });
+  }, delayMs);
+}
+
+// ── Volumen ───────────────────────────────────────────────────────
+function setVolume(val) {
+  rpState.volume = val;
+  const fill = document.getElementById('rp-vol-fill');
+  if (fill) fill.style.width = `${val}%`;
+  if (rpState.widget && rpState.widgetReady) rpState.widget.setVolume(val);
+}
+
+// ── SoundCloud Widget ─────────────────────────────────────────────
+function loadSoundCloudAPI() {
+  return new Promise(resolve => {
+    if (window.SC) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://w.soundcloud.com/player/api.js';
+    s.onload = resolve;
+    document.head.appendChild(s);
+  });
+}
+
+function initWidget() {
+  const iframe = document.getElementById('rp-sc-iframe');
+  if (!iframe || !window.SC) return;
+
+  rpState.widget = SC.Widget(iframe);
+
+  rpState.widget.bind(SC.Widget.Events.READY, () => {
+    rpState.widgetReady = true;
+    rpState.widget.setVolume(rpState.volume);
+    seekToRandom(500);
+  });
+
+  rpState.widget.bind(SC.Widget.Events.PLAY, () => {
+    rpState.isPlaying = true;
+    updatePlayPauseButtons();
+    updateDisplay();
+    startSpectrum();
+  });
+
+  rpState.widget.bind(SC.Widget.Events.PAUSE, () => {
+    rpState.isPlaying = false;
+    updatePlayPauseButtons();
+    updateDisplay();
+    stopSpectrum();
+  });
+
+  rpState.widget.bind(SC.Widget.Events.FINISH, nextMix);
+  rpState.widget.bind(SC.Widget.Events.ERROR,  () => { console.warn('[Radio] error, skip'); nextMix(); });
+}
+
+function loadMix(mix, autoplay) {
+  if (!mix?.soundcloudUrl || !rpState.widget || !rpState.widgetReady) return;
+  rpState.widget.load(mix.soundcloudUrl, {
+    auto_play: autoplay ?? rpState.isPlaying,
+    hide_related: true, show_comments: false,
+    show_user: false, show_reposts: false, visual: false,
+  });
+  seekToRandom(1000);
+}
+
+// ── Controles ─────────────────────────────────────────────────────
+function play()  { rpState.widget?.play?.(); }
+function pause() { rpState.widget?.pause?.(); }
+
+function nextMix() {
+  const e = getCurrentEstacion();
+  if (!e?.mixes?.length) return;
+  rpState.currentMixIdx++;
+  if (rpState.currentMixIdx >= rpState.shuffledPlaylists[rpState.currentEstacionIdx].length) {
+    rpState.shuffledPlaylists[rpState.currentEstacionIdx] = shuffleArray(e.mixes);
+    rpState.currentMixIdx = 0;
+  }
+  loadMix(getCurrentMix());
+  updateDisplay();
+}
+
+function prevMix() {
+  rpState.currentMixIdx = Math.max(0, rpState.currentMixIdx - 1);
+  loadMix(getCurrentMix());
+  updateDisplay();
+}
+
+function changeEstacion(idx) {
+  if (idx === rpState.currentEstacionIdx) return;
+  const wasPlaying = rpState.isPlaying;
+  rpState.currentEstacionIdx = idx;
+  rpState.currentMixIdx = 0;
+  loadMix(getCurrentMix(), wasPlaying);
+  updateDisplay();
+  updateStationList();
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+async function initRadioPlayer() {
+  const dataEl = document.getElementById('rp-estaciones-data');
+  if (!dataEl) return;
+  try { rpState.estaciones = JSON.parse(dataEl.textContent || '[]'); }
+  catch { console.error('[Radio] Error parseando estaciones'); return; }
+  if (!rpState.estaciones.length) return;
+
+  initPlaylists();
+  setVolume(rpState.volume);
+  updateDisplay();
+
+  document.getElementById('rp-play-btn') ?.addEventListener('click', play);
+  document.getElementById('rp-pause-btn')?.addEventListener('click', pause);
+  document.getElementById('rp-next-btn') ?.addEventListener('click', nextMix);
+  document.getElementById('rp-prev-btn') ?.addEventListener('click', prevMix);
+
+  document.getElementById('rp-vol-slider')?.addEventListener('input', e =>
+    setVolume(Number(e.target.value))
+  );
+
+  document.querySelectorAll('.rp-station-row').forEach((row, i) => {
+    row.addEventListener('click', () => changeEstacion(i));
+    row.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') changeEstacion(i);
+    });
+  });
+
+  if (getCurrentMix()?.soundcloudUrl) {
+    await loadSoundCloudAPI();
+    initWidget();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRadioPlayer);
+} else {
+  initRadioPlayer();
+}
+</script>
+
+<style>
+  /* ── CHASIS ─────────────────────────────────────────────────────── */
+  .radio-player {
+    width: 100%;
+    height: 100%;
+    background: #D8D5CC;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Chicago FLF', 'Tahoma', 'MS Sans Serif', sans-serif;
+    overflow: hidden;
+    /* Plástico ABS 90s */
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.75),
+      inset 1px 0 rgba(255,255,255,0.5),
+      inset -1px 0 rgba(0,0,0,0.12),
+      inset 0 -1px 0 rgba(0,0,0,0.18);
+  }
+
+  /* ── DISPLAY VFD ────────────────────────────────────────────────── */
+  .rp-display-panel {
+    margin: 10px 12px 0;
+    background: #0A1A0A;
+    border: 2px solid #8a8880;
+    box-shadow:
+      inset 0 0 18px rgba(0,30,0,0.9),
+      0 1px 0 rgba(255,255,255,0.4),
+      0 -1px 0 rgba(0,0,0,0.3);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .rp-display-inner {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 10px 14px 10px 12px;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .rp-display-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.28) 0,
+      rgba(0,0,0,0.28) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .rp-display-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .rp-vfd-station {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #4AFF4A;
+    text-shadow: 0 0 6px #4AFF4A, 0 0 14px rgba(74,255,74,0.5);
+    letter-spacing: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rp-vfd-freq-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    line-height: 1;
+  }
+  .rp-vfd-freq-num {
+    font-family: 'VT323', monospace;
+    font-size: 48px;
+    color: #39FF14;
+    text-shadow: 0 0 10px #39FF14, 0 0 24px rgba(57,255,20,0.4);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .rp-vfd-freq-sfx {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #2ECC2E;
+    text-shadow: 0 0 6px #39FF14;
+    align-self: flex-end;
+    margin-bottom: 6px;
+  }
+  .rp-vfd-nowplaying {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+  }
+  .rp-vfd-play-tri {
+    font-family: monospace;
+    font-size: 10px;
+    color: #4AFF4A;
+    text-shadow: 0 0 5px #4AFF4A;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+  .rp-vfd-play-tri.is-playing { opacity: 1; }
+  .rp-vfd-mix-title {
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    color: #2ECC2E;
+    text-shadow: 0 0 4px rgba(57,255,20,0.4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rp-display-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+    padding-bottom: 2px;
+  }
+  .rp-signal-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 5px;
+    color: #2ECC2E;
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px #39FF14;
+  }
+  .rp-signal-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .rp-sig-bar {
+    display: block;
+    width: 4px;
+    background: #39FF14;
+    box-shadow: 0 0 3px #39FF14;
+    border-radius: 1px;
+  }
+
+  /* ── VISUALIZADOR DE ESPECTRO ───────────────────────────────────── */
+  .rp-spectrum-panel {
+    margin: 6px 12px 0;
+    background: #1a1a1a;
+    border: 1px solid #8a8880;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.3);
+    height: 52px;
+    flex-shrink: 0;
+  }
+  .rp-spectrum-bars {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: 4px 6px 3px;
+    gap: 2px;
+    box-sizing: border-box;
+  }
+  .rp-spec-bar {
+    flex: 1;
+    background: linear-gradient(
+      to top,
+      #00dd00 0%,
+      #00dd00 50%,
+      #dddd00 70%,
+      #ff8800 85%,
+      #ff2200 100%
+    );
+    border-radius: 1px 1px 0 0;
+    height: 8%;
+    transition: height 0.12s ease-out;
+  }
+
+  /* ── CONTROLES ──────────────────────────────────────────────────── */
+  .rp-controls-panel {
+    margin: 6px 12px 0;
+    background: #CBC8BF;
+    border: 1px solid #8a8880;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 0 rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px;
+    flex-shrink: 0;
+  }
+
+  /* Botones estilo plástico beige 3D */
+  .rp-buttons-group {
+    display: flex;
+    gap: 4px;
+  }
+  .rp-btn {
+    background: #D0CEC5;
+    border-top: 2px solid #ece9e0;
+    border-left: 2px solid #ece9e0;
+    border-right: 2px solid #7a7870;
+    border-bottom: 2px solid #7a7870;
+    padding: 5px 10px;
+    font-family: monospace;
+    font-size: 11px;
+    cursor: pointer;
+    color: #1a1a1a;
+    white-space: nowrap;
+    min-width: 34px;
+    text-align: center;
+    user-select: none;
+    line-height: 1;
+  }
+  .rp-btn:hover { background: #dad8cf; }
+  .rp-btn:active {
+    border-top: 2px solid #7a7870;
+    border-left: 2px solid #7a7870;
+    border-right: 2px solid #ece9e0;
+    border-bottom: 2px solid #ece9e0;
+    padding: 6px 9px 4px 11px;
+  }
+
+  /* Volumen */
+  .rp-volume-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .rp-ctrl-label {
+    font-family: 'Chicago FLF', 'Tahoma', sans-serif;
+    font-size: 8px;
+    color: #555;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .rp-vol-track {
+    height: 12px;
+    background: #111;
+    border-top: 1px solid #7a7870;
+    border-left: 1px solid #7a7870;
+    border-right: 1px solid #ece9e0;
+    border-bottom: 1px solid #ece9e0;
+    position: relative;
+    overflow: hidden;
+  }
+  .rp-vol-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #cc6600, #FFA500);
+    pointer-events: none;
+    transition: width 0.1s;
+  }
+  .rp-vol-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    cursor: pointer;
+    margin: 0;
+    z-index: 1;
+  }
+  .rp-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 8px;
+    height: 16px;
+    background: linear-gradient(to bottom, #ece9e0, #a8a89a);
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #555;
+    border-bottom: 1px solid #555;
+    cursor: grab;
+  }
+  .rp-vol-slider::-moz-range-thumb {
+    width: 8px;
+    height: 14px;
+    background: linear-gradient(to bottom, #ece9e0, #a8a89a);
+    border: 1px solid #7a7870;
+    cursor: grab;
+  }
+
+  /* Perilla decorativa */
+  .rp-knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .rp-knob {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 35%, #e0ddd4, #888884);
+    border-top: 2px solid #ece9e0;
+    border-left: 2px solid #ece9e0;
+    border-right: 2px solid #5a5850;
+    border-bottom: 2px solid #5a5850;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.4);
+    position: relative;
+    cursor: default;
+  }
+  .rp-knob-mark {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 8px;
+    background: #2a2a2a;
+    border-radius: 1px;
+  }
+
+  /* ── LISTA DE ESTACIONES ────────────────────────────────────────── */
+  .rp-station-list {
+    margin: 6px 12px 10px;
+    border: 1px solid #8a8880;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+    overflow: hidden;
+    flex: 1;
+  }
+  .rp-station-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 22px;
+    align-items: center;
+    padding: 0 8px;
+    height: 32px;
+    background: #fff;
+    border-bottom: 1px dashed #bbb;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s;
+    gap: 4px;
+  }
+  .rp-station-row:last-child { border-bottom: none; }
+  .rp-station-row:hover:not(.is-active) { background: #f0eeea; }
+  .rp-station-row.is-active {
+    background: var(--row-color, #FF8C1A);
+    color: #fff;
+    border-bottom-color: rgba(0,0,0,0.15);
+  }
+
+  .rp-row-freq {
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: #333;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .rp-station-row.is-active .rp-row-freq { color: rgba(255,255,255,0.85); }
+
+  .rp-row-info {
+    font-size: 11px;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+  }
+  .rp-station-row.is-active .rp-row-info { color: #fff; }
+  .rp-row-name { font-weight: bold; }
+  .rp-row-genre { opacity: 0.75; font-size: 10px; }
+  .rp-station-row.is-active .rp-row-genre { opacity: 0.85; }
+
+  .rp-row-indicator {
+    font-family: monospace;
+    font-size: 10px;
+    color: #999;
+    text-align: right;
+    line-height: 1;
+  }
+  .rp-station-row.is-active .rp-row-indicator { color: #fff; font-size: 8px; }
+</style>
