@@ -1,0 +1,250 @@
+---
+// Clima.astro — Clima actual de Buenos Aires via Open-Meteo
+---
+
+<div class="clima-app" id="clima-app">
+  <div class="clima-body">
+
+    <div class="clima-loading" id="clima-loading">
+      <span class="clima-loading-text">CARGANDO...</span>
+    </div>
+
+    <div class="clima-content" id="clima-content" style="display:none">
+      <div class="clima-icon-col">
+        <img id="clima-icon" src="/icons/weather/soleado.png" alt="clima" class="clima-icon" />
+      </div>
+      <div class="clima-info-col">
+        <div class="clima-temp" id="clima-temp">--°C</div>
+        <div class="clima-condition" id="clima-condition">---</div>
+        <div class="clima-barrio" id="clima-barrio">EN ---</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* ── Contenedor ─────────────────────────────────────────────────── */
+  .clima-app {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Fondo papel envejecido ─────────────────────────────────────── */
+  .clima-body {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 32px;
+
+    background-color: #D8D0BC;
+    background-image:
+      /* Luz cálida esquina superior izquierda */
+      radial-gradient(ellipse at 0% 0%, rgba(255,248,225,0.55) 0%, transparent 60%),
+      /* Sombra esquina inferior derecha */
+      radial-gradient(ellipse at 100% 100%, rgba(110,90,55,0.14) 0%, transparent 58%),
+      /* Fibras de papel diagonales principales */
+      repeating-linear-gradient(
+        174deg,
+        transparent 0px, transparent 2px,
+        rgba(0,0,0,0.013) 2px, rgba(0,0,0,0.013) 3px
+      ),
+      /* Fibras secundarias cruzadas */
+      repeating-linear-gradient(
+        6deg,
+        transparent 0px, transparent 7px,
+        rgba(255,255,255,0.05) 7px, rgba(255,255,255,0.05) 8px
+      ),
+      /* Textura de grano horizontal muy sutil */
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 14px,
+        rgba(0,0,0,0.007) 14px, rgba(0,0,0,0.007) 15px
+      );
+
+    /* Viñeta bordes */
+    box-shadow: inset 0 0 55px rgba(70,50,20,0.14);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Loading ────────────────────────────────────────────────────── */
+  .clima-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .clima-loading-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #4a3e28;
+    letter-spacing: 3px;
+    animation: clima-blink 1s step-end infinite;
+  }
+  @keyframes clima-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+  }
+
+  /* ── Layout de contenido ────────────────────────────────────────── */
+  .clima-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 36px;
+  }
+
+  /* ── Ícono ──────────────────────────────────────────────────────── */
+  .clima-icon-col {
+    flex-shrink: 0;
+  }
+  .clima-icon {
+    width: 140px;
+    height: 140px;
+    image-rendering: pixelated;
+    display: block;
+    filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.18));
+  }
+
+  /* ── Texto ──────────────────────────────────────────────────────── */
+  .clima-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .clima-temp {
+    font-family: 'VT323', monospace;
+    font-size: 80px;
+    color: #1a1410;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    /* Sombra sutil tipo impresión sobre papel */
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.12);
+  }
+
+  .clima-condition {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #2a1e0a;
+    letter-spacing: 1px;
+    line-height: 1.5;
+  }
+
+  .clima-barrio {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: #6a5535;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+</style>
+
+<script>
+const BARRIOS = [
+  'ALMAGRO','BOEDO','SAN TELMO','VILLA CRESPO','CABALLITO',
+  'FLORES','BELGRANO','PALERMO','BARRACAS','LA BOCA','RECOLETA',
+  'VILLA URQUIZA','MATADEROS','PARQUE PATRICIOS','CHACARITA',
+  'COLEGIALES','LINIERS','FLORESTA','MONSERRAT','ABASTO',
+];
+
+const CODE_TO_ICON = {
+  0: 'soleado',
+  1: 'parcial',  2: 'parcial',
+  3: 'nublado',
+  45: 'nublado', 48: 'nublado',
+  51: 'llovizna', 53: 'llovizna', 55: 'llovizna', 56: 'llovizna', 57: 'llovizna',
+  61: 'lluvia',  63: 'lluvia',  66: 'lluvia',
+  65: 'lluvia-fuerte', 67: 'lluvia-fuerte',
+  71: 'lluvia', 73: 'lluvia', 75: 'lluvia', 77: 'lluvia',
+  80: 'lluvia', 81: 'lluvia', 82: 'lluvia', 85: 'lluvia', 86: 'lluvia',
+  95: 'tormenta',
+  96: 'tormenta-lluvia', 99: 'tormenta-lluvia',
+};
+
+const ICON_TO_TEXT = {
+  'soleado':          'DESPEJADO',
+  'parcial':          'PARCIAL NUBLADO',
+  'nublado':          'NUBLADO',
+  'llovizna':         'LLUVIA LEVE',
+  'lluvia':           'LLUVIA',
+  'lluvia-fuerte':    'LLUVIA FUERTE',
+  'tormenta':         'TORMENTA',
+  'tormenta-lluvia':  'TORMENTA CON LLUVIA',
+  'noche':            'DESPEJADO',
+};
+
+function randomBarrio() {
+  return BARRIOS[Math.floor(Math.random() * BARRIOS.length)];
+}
+
+function resolveIcon(weathercode, isDay) {
+  if (!isDay && (weathercode === 0 || weathercode === 1 || weathercode === 2)) {
+    return 'noche';
+  }
+  return CODE_TO_ICON[weathercode] ?? 'nublado';
+}
+
+function showLoading() {
+  document.getElementById('clima-loading').style.display = 'flex';
+  document.getElementById('clima-content').style.display = 'none';
+}
+
+function renderClima(temp, iconKey, barrio) {
+  document.getElementById('clima-icon').src = `/icons/weather/${iconKey}.png`;
+  document.getElementById('clima-icon').alt = ICON_TO_TEXT[iconKey] ?? '';
+  document.getElementById('clima-temp').textContent = `${temp}°C`;
+  document.getElementById('clima-condition').textContent = ICON_TO_TEXT[iconKey] ?? 'DESPEJADO';
+  document.getElementById('clima-barrio').textContent = `EN ${barrio}`;
+  document.getElementById('clima-loading').style.display = 'none';
+  document.getElementById('clima-content').style.display = 'flex';
+}
+
+async function fetchClima() {
+  showLoading();
+  const barrio = randomBarrio();
+
+  try {
+    const url =
+      'https://api.open-meteo.com/v1/forecast' +
+      '?latitude=-34.6037&longitude=-58.3816' +
+      '&current_weather=true' +
+      '&timezone=America%2FArgentina%2FBuenos_Aires';
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    const { temperature, weathercode, is_day } = data.current_weather;
+    const iconKey = resolveIcon(weathercode, is_day);
+    renderClima(Math.round(temperature), iconKey, barrio);
+
+  } catch (err) {
+    console.warn('[Clima] Error:', err.message);
+    renderClima('—', 'nublado', barrio);
+    document.getElementById('clima-condition').textContent = 'SIN SEÑAL';
+  }
+}
+
+function initClima() {
+  const climaWindow = document.querySelector('[data-window-id="clima"]');
+  if (!climaWindow) return;
+
+  let wasVisible = false;
+
+  new MutationObserver(() => {
+    const isVisible = climaWindow.style.display === 'flex';
+    if (isVisible && !wasVisible) fetchClima();
+    wasVisible = isVisible;
+  }).observe(climaWindow, { attributes: true, attributeFilter: ['style'] });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initClima);
+} else {
+  initClima();
+}
+</script>

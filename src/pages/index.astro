@@ -7,6 +7,7 @@ import Dock from '../components/Dock.astro';
 import LoadingScreen from '../components/LoadingScreen.astro';
 import TVPlayer from '../components/TVPlayer.astro';
 import RadioPlayer from '../components/RadioPlayer.astro';
+import Clima from '../components/Clima.astro';
 ---
 
 <html lang="es">
@@ -48,10 +49,8 @@ import RadioPlayer from '../components/RadioPlayer.astro';
         <p style="margin-top:8px;opacity:0.6;">[Construcción en Fase 3]</p>
       </Window>
 
-      <Window id="clima" title="Clima Porteño" width={220} height={200} initialX={300} initialY={130}>
-        <p><strong>Clima — placeholder</strong></p>
-        <p>Datos en vivo de Buenos Aires vía Open-Meteo.</p>
-        <p style="margin-top:8px;opacity:0.6;">[Construcción en Fase 4]</p>
+      <Window id="clima" title="Clima Porteño" width={480} height={260} initialX={300} initialY={130}>
+        <Clima />
       </Window>
 
       <Window id="eventos" title="Cartelera — eventos.txt" width={340} height={300} initialX={340} initialY={70}>
@@ -97,7 +96,8 @@ import RadioPlayer from '../components/RadioPlayer.astro';
 <style is:global>
   /* Ventanas con contenido especial: sin padding en el body */
   .window:has(.tv-player) .window-body,
-  .window:has(.radio-player) .window-body {
+  .window:has(.radio-player) .window-body,
+  .window:has(.clima-app) .window-body {
     padding: 0;
     overflow: hidden;
   }
