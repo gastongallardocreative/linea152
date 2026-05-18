@@ -8,6 +8,7 @@ import LoadingScreen from '../components/LoadingScreen.astro';
 import TVPlayer from '../components/TVPlayer.astro';
 import RadioPlayer from '../components/RadioPlayer.astro';
 import Clima from '../components/Clima.astro';
+import Mapa from '../components/Mapa.astro';
 ---
 
 <html lang="es">
@@ -43,10 +44,8 @@ import Clima from '../components/Clima.astro';
         <RadioPlayer />
       </Window>
 
-      <Window id="mapa" title="Mapa BSAS — bsas.bmp" width={420} height={320} initialX={260} initialY={90}>
-        <p><strong>Mapa de Buenos Aires — placeholder</strong></p>
-        <p>SVG interactivo de CABA. Click en barrio abre archivo del barrio.</p>
-        <p style="margin-top:8px;opacity:0.6;">[Construcción en Fase 3]</p>
+      <Window id="mapa" title="Mapa BSAS — bsas.bmp" width={1000} height={650} initialX={260} initialY={90}>
+        <Mapa />
       </Window>
 
       <Window id="clima" title="Clima Porteño" width={480} height={260} initialX={300} initialY={130}>
@@ -97,7 +96,8 @@ import Clima from '../components/Clima.astro';
   /* Ventanas con contenido especial: sin padding en el body */
   .window:has(.tv-player) .window-body,
   .window:has(.radio-player) .window-body,
-  .window:has(.clima-app) .window-body {
+  .window:has(.clima-app) .window-body,
+  .window:has(.mapa-app) .window-body {
     padding: 0;
     overflow: hidden;
   }
